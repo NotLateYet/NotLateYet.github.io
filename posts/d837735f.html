@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  <meta name="google-site-verification" content="z98GT4PZdRgrcES2hf9DTxMShekuK_k-48TNAutBYZg" />
+  
+  
+    <meta name="msvalidate.01" content="8C31B0044947BFFD6869DD1B5E5E8268" />
+  
+  
+  <meta name="baidu-site-verification" content="code-fDSTdt2hx7" />
+  
+  
+  <title>机器之心-2020年AI进展及2021年趋势关注重点笔记 | Not late</title>
+  <meta name="description" content="1. 人工智能技术总趋势  无监督学习是未来技术突破的主要着力点 在语言技术和视觉技术这两个人工智能感知层应用落地最成熟的两个技术领域，无监督学习都是被提及频率最高的技术发展趋势。NLP领域目前最成功的大规模预训练语言模型（BERT等）证明了无监督学习在自言语言处理类任务里的可行性与发展潜力，transformer体系结构已成为NLP任务的实际标准，开始扩展至最相关的语音技术领域，而计算机视觉领">
+<meta property="og:type" content="article">
+<meta property="og:title" content="机器之心-2020年AI进展及2021年趋势关注重点笔记">
+<meta property="og:url" content="https://www.notlate.net/posts/d837735f.html">
+<meta property="og:site_name" content="Not late yet">
+<meta property="og:description" content="1. 人工智能技术总趋势  无监督学习是未来技术突破的主要着力点 在语言技术和视觉技术这两个人工智能感知层应用落地最成熟的两个技术领域，无监督学习都是被提及频率最高的技术发展趋势。NLP领域目前最成功的大规模预训练语言模型（BERT等）证明了无监督学习在自言语言处理类任务里的可行性与发展潜力，transformer体系结构已成为NLP任务的实际标准，开始扩展至最相关的语音技术领域，而计算机视觉领">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-02-26T12:22:15.000Z">
+<meta property="article:modified_time" content="2021-03-18T15:04:38.598Z">
+<meta property="article:author" content="ACDance">
+<meta property="article:tag" content="人工智能">
+<meta property="article:tag" content="发展趋势">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://www.notlate.net/posts/d837735f.html">
+  
+    <link rel="alternate" href="/atom.xml" title="Not late yet" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+    <link href="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.3.5/dist/jquery.fancybox.min.css" rel="stylesheet">
+  
+  
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+<body class="main-center theme-blue" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="" target="_blank">
+          <img class="img-circle img-rotate" src="/images/logo.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">ACDance</h2>
+<!--         <h3 id="title" class="hidden-xs hidden-sm hidden-md">一无所知，或是没被理解；&lt;br/&gt;一事无成，或是没被重视。</h3> -->
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">
+            一无所知，或是没被理解；<br/>一事无成，或是没被重视。
+        </h3>
+<!--         <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> </small> -->
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="检索..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/NotLateYet" target="_blank" title="Github" ><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" ><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/">人工智能</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F/">分布式</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/">深度学习推荐系统</a><span class="category-list-count">13</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%A1%E7%AE%97%E5%B9%BF%E5%91%8A/">计算广告</a><span class="category-list-count">16</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/">论文笔记</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/ADX/" style="font-size: 13px;">ADX</a> <a href="/tags/DSP/" style="font-size: 13px;">DSP</a> <a href="/tags/Embedding/" style="font-size: 13px;">Embedding</a> <a href="/tags/GNN/" style="font-size: 13px;">GNN</a> <a href="/tags/MMoE/" style="font-size: 13px;">MMoE</a> <a href="/tags/SSP/" style="font-size: 13px;">SSP</a> <a href="/tags/mongodb/" style="font-size: 13.5px;">mongodb</a> <a href="/tags/redis/" style="font-size: 13.5px;">redis</a> <a href="/tags/%E4%B8%9A%E7%95%8C%E4%B8%BB%E6%B5%81/" style="font-size: 13px;">业界主流</a> <a href="/tags/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" style="font-size: 13.25px;">人工智能</a> <a href="/tags/%E4%BC%A0%E7%BB%9F%E7%AE%97%E6%B3%95/" style="font-size: 13px;">传统算法</a> <a href="/tags/%E4%BF%A1%E6%81%AF%E6%B5%81/" style="font-size: 13px;">信息流</a> <a href="/tags/%E5%8D%8F%E5%90%8C%E8%BF%87%E6%BB%A4/" style="font-size: 13px;">协同过滤</a> <a href="/tags/%E5%8E%9F%E7%94%9F%E5%B9%BF%E5%91%8A/" style="font-size: 13px;">原生广告</a> <a href="/tags/%E5%8F%91%E5%B1%95%E8%B6%8B%E5%8A%BF/" style="font-size: 13.25px;">发展趋势</a> <a href="/tags/%E5%8F%97%E4%BC%97%E5%AE%9A%E5%90%91/" style="font-size: 13px;">受众定向</a> <a href="/tags/%E5%90%88%E7%BA%A6%E5%B9%BF%E5%91%8A/" style="font-size: 13px;">合约广告</a> <a href="/tags/%E5%9C%A8%E7%BA%BF%E5%B9%BF%E5%91%8A/" style="font-size: 13.25px;">在线广告</a> <a href="/tags/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/" style="font-size: 13px;">工程实践</a> <a href="/tags/%E5%B9%BF%E5%91%8A%E5%9F%BA%E7%A1%80/" style="font-size: 13px;">广告基础</a> <a href="/tags/%E5%B9%BF%E5%91%8A%E6%8A%95%E6%94%BE/" style="font-size: 13px;">广告投放</a> <a href="/tags/%E5%B9%BF%E5%91%8A%E7%BD%91%E7%BB%9C/" style="font-size: 13px;">广告网络</a> <a href="/tags/%E6%8E%A2%E7%B4%A2%E4%B8%8E%E5%88%A9%E7%94%A8/" style="font-size: 13px;">探索与利用</a> <a href="/tags/%E6%8E%A8%E8%8D%90%E6%A8%A1%E5%9E%8B/" style="font-size: 13px;">推荐模型</a> <a href="/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/" style="font-size: 13.75px;">推荐系统</a> <a href="/tags/%E6%90%9C%E7%B4%A2%E5%B9%BF%E5%91%8A/" style="font-size: 13px;">搜索广告</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E4%BA%A4%E6%98%93/" style="font-size: 13px;">数据交易</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%B7%A5/" style="font-size: 13px;">数据加工</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86/" style="font-size: 13px;">数据处理</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 14px;">数据库</a> <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" style="font-size: 13px;">机器学习</a> <a href="/tags/%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF/" style="font-size: 13px;">核心技术</a> <a href="/tags/%E6%A8%A1%E5%9E%8B%E8%AF%84%E4%BC%B0/" style="font-size: 13px;">模型评估</a> <a href="/tags/%E6%B5%8B%E8%AF%95%E6%A1%86%E6%9E%B6/" style="font-size: 13px;">测试框架</a> <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" style="font-size: 13.25px;">深度学习</a> <a href="/tags/%E7%82%B9%E5%87%BB%E7%8E%87%E9%A2%84%E6%B5%8B/" style="font-size: 13px;">点击率预测</a> <a href="/tags/%E7%89%B9%E5%BE%81%E5%B7%A5%E7%A8%8B/" style="font-size: 13px;">特征工程</a> <a href="/tags/%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/" style="font-size: 13px;">知识图谱</a> <a href="/tags/%E7%A8%8B%E5%BA%8F%E5%8C%96%E4%BA%A4%E6%98%93/" style="font-size: 13px;">程序化交易</a> <a href="/tags/%E7%AB%9E%E4%BB%B7%E5%B9%BF%E5%91%8A/" style="font-size: 13px;">竞价广告</a> <a href="/tags/%E7%BA%BF%E4%B8%8A%E6%9C%8D%E5%8A%A1/" style="font-size: 13px;">线上服务</a> <a href="/tags/%E8%AE%A1%E7%AE%97%E5%B9%BF%E5%91%8A/" style="font-size: 13px;">计算广告</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">推荐阅读</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled ">
+        
+          <li>
+<!--              -->
+<!--             <div class="item-thumb"> -->
+<!--               <a href="/posts/d837735f.html" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+ -->
+<!--             </div> -->
+<!--              -->
+            <div class="item-inner">
+<!--               <p class="item-category"> -->
+<!--                 <a class="category-link" href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/">人工智能</a> -->
+<!--               </p> -->
+              <p class="item-title">
+                <a href="/posts/d837735f.html" class="title">机器之心-2020年AI进展及2021年趋势关注重点笔记</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-02-26T12:22:15.000Z" itemprop="datePublished">2021-02-26</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+<!--              -->
+<!--             <div class="item-thumb"> -->
+<!--               <a href="/posts/6cc588ae.html" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+ -->
+<!--             </div> -->
+<!--              -->
+            <div class="item-inner">
+<!--               <p class="item-category"> -->
+<!--                 <a class="category-link" href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/">人工智能</a> -->
+<!--               </p> -->
+              <p class="item-title">
+                <a href="/posts/6cc588ae.html" class="title">智源研究院-2020年AI进展及2021年趋势关注重点笔记</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-02-24T13:36:22.000Z" itemprop="datePublished">2021-02-24</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+<!--              -->
+<!--             <div class="item-thumb"> -->
+<!--               <a href="/posts/a08c2ad5.html" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+ -->
+<!--             </div> -->
+<!--              -->
+            <div class="item-inner">
+<!--               <p class="item-category"> -->
+<!--                 <a class="category-link" href="/categories/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/">论文笔记</a> -->
+<!--               </p> -->
+              <p class="item-title">
+                <a href="/posts/a08c2ad5.html" class="title">GNN笔记01-基础原理与应用</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-02-04T06:30:40.000Z" itemprop="datePublished">2021-02-04</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+<!--              -->
+<!--             <div class="item-thumb"> -->
+<!--               <a href="/posts/2c4e9dc8.html" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+ -->
+<!--             </div> -->
+<!--              -->
+            <div class="item-inner">
+<!--               <p class="item-category"> -->
+<!--                 <a class="category-link" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/">深度学习推荐系统</a> -->
+<!--               </p> -->
+              <p class="item-title">
+                <a href="/posts/2c4e9dc8.html" class="title">深度学习推荐系统-笔记13：探究业界主流的推荐系统解决方案</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-01-05T15:24:40.000Z" itemprop="datePublished">2021-01-05</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+<!--              -->
+<!--             <div class="item-thumb"> -->
+<!--               <a href="/posts/9f710c67.html" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+ -->
+<!--             </div> -->
+<!--              -->
+            <div class="item-inner">
+<!--               <p class="item-category"> -->
+<!--                 <a class="category-link" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/">深度学习推荐系统</a> -->
+<!--               </p> -->
+              <p class="item-title">
+                <a href="/posts/9f710c67.html" class="title">深度学习推荐系统-笔记12：模型评估</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-01-05T14:28:20.000Z" itemprop="datePublished">2021-01-05</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">三月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">二月 2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">十月 2020</a><span class="archive-list-count">16</span></li></ul>
+    </div>
+  </div>
+
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD%E6%8A%80%E6%9C%AF%E6%80%BB%E8%B6%8B%E5%8A%BF"><span class="toc-number">1.</span> <span class="toc-text"> 1. 人工智能技术总趋势</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%97%A0%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0%E6%98%AF%E6%9C%AA%E6%9D%A5%E6%8A%80%E6%9C%AF%E7%AA%81%E7%A0%B4%E7%9A%84%E4%B8%BB%E8%A6%81%E7%9D%80%E5%8A%9B%E7%82%B9"><span class="toc-number">1.1.</span> <span class="toc-text"> 无监督学习是未来技术突破的主要着力点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A7%BB%E5%8A%A8%E8%AE%BE%E5%A4%87%E5%92%8Ciot%E8%AE%BE%E5%A4%87%E5%BC%80%E5%A7%8B%E6%89%BF%E6%8B%85%E6%9B%B4%E5%A4%9Aaiml%E8%AE%A1%E7%AE%97"><span class="toc-number">1.2.</span> <span class="toc-text"> 移动设备和IoT设备开始承担更多AI&#x2F;ML计算</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%BE%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C-%E5%9C%9F%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0-%E5%A4%A7%E8%A7%84%E6%A8%A1%E5%9B%BE%E8%AE%A1%E7%AE%97%E5%B9%B3%E5%8F%B0%E5%B0%86%E6%9C%89%E5%BE%88%E5%A4%A7%E5%8F%91%E5%B1%95%E7%A9%BA%E9%97%B4"><span class="toc-number">1.3.</span> <span class="toc-text"> 图神经网络、土深度学习、大规模图计算平台将有很大发展空间</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E4%BA%BA%E7%B1%BB%E8%AF%AD%E8%A8%80%E6%8A%80%E6%9C%AF"><span class="toc-number">2.</span> <span class="toc-text"> 2. 人类语言技术</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%A7%E8%A7%84%E6%A8%A1%E9%A2%84%E8%AE%AD%E7%BB%83%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B"><span class="toc-number">2.1.</span> <span class="toc-text"> 大规模预训练语言模型</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89"><span class="toc-number">3.</span> <span class="toc-text"> 3. 计算机视觉</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%A6%E7%95%8C%E9%97%AE%E5%8D%B7%E6%83%85%E5%86%B5%E6%91%98%E5%BD%95%E9%87%8D%E7%82%B9"><span class="toc-number">3.1.</span> <span class="toc-text"> 学界问卷情况（摘录重点）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0"><span class="toc-number">4.</span> <span class="toc-text"> 4. 机器学习</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%9F%E6%88%90%E5%AF%B9%E6%8A%97%E7%BD%91%E7%BB%9C%E7%9A%84%E6%8A%80%E6%9C%AF%E6%80%A7%E7%AA%81%E7%A0%B4"><span class="toc-number">4.1.</span> <span class="toc-text"> 生成对抗网络的技术性突破</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9A%E6%A8%A1%E6%80%81%E6%8A%80%E6%9C%AF%E7%9A%84%E5%B4%9B%E8%B5%B7"><span class="toc-number">4.2.</span> <span class="toc-text"> 多模态技术的崛起</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E6%95%B0%E6%8D%AE%E6%99%BA%E8%83%BD%E6%8A%80%E6%9C%AF"><span class="toc-number">5.</span> <span class="toc-text"> 5. 数据智能技术</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1%E5%BF%AB%E9%80%9F%E5%8F%91%E5%B1%95%E6%A8%A1%E5%9E%8B-%E6%A1%86%E6%9E%B6-%E6%95%B0%E6%8D%AE%E9%9B%86%E6%B6%8C%E7%8E%B0"><span class="toc-number">5.1.</span> <span class="toc-text"> 知识图谱：快速发展，模型、框架、数据集涌现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%A1%E6%81%AF%E6%A3%80%E7%B4%A2%E5%92%8C%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%B8%A6%E6%9D%A5%E7%AA%81%E7%A0%B4%E7%9B%B8%E5%85%B3%E5%B8%82%E5%9C%BA%E6%9B%B4%E5%8A%A0%E7%B9%81%E8%8D%A3"><span class="toc-number">5.2.</span> <span class="toc-text"> 信息检索和推荐系统：深度学习带来突破，相关市场更加繁荣</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E5%89%8D%E6%B2%BF%E6%99%BA%E8%83%BD%E6%8A%80%E6%9C%AF"><span class="toc-number">6.</span> <span class="toc-text"> 6. 前沿智能技术</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%8F%E6%84%9F%E6%8A%80%E6%9C%AF%E9%A2%86%E5%9F%9F%E7%9A%84%E7%9B%B8%E5%85%B3%E8%A7%84%E7%AB%A0%E5%88%B6%E5%BA%A6-%E6%B3%95%E5%BE%8B%E6%B3%95%E8%A7%84%E6%84%88%E5%8F%91%E5%AE%8C%E5%96%84"><span class="toc-number">6.1.</span> <span class="toc-text"> 敏感技术领域的相关规章制度、法律法规愈发完善</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E6%8A%80%E6%9C%AF%E9%A2%86%E5%9F%9F%E5%A4%A7%E4%BA%8B%E4%BB%B6"><span class="toc-number">7.</span> <span class="toc-text"> 7. 技术领域大事件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E4%BA%BA%E7%B1%BB%E8%AF%AD%E8%A8%80%E6%8A%80%E6%9C%AF"><span class="toc-number">7.1.</span> <span class="toc-text"> 1. 人类语言技术</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89"><span class="toc-number">7.2.</span> <span class="toc-text"> 2. 计算机视觉</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0"><span class="toc-number">7.3.</span> <span class="toc-text"> 3. 机器学习</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E9%80%9A%E7%94%A8%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0"><span class="toc-number">7.3.1.</span> <span class="toc-text"> （1）通用机器学习</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E7%94%9F%E6%88%90%E5%AF%B9%E6%8A%97%E7%BD%91%E7%BB%9Cgan"><span class="toc-number">7.3.2.</span> <span class="toc-text"> （2） 生成对抗网络（GAN）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0rl"><span class="toc-number">7.3.3.</span> <span class="toc-text"> （3）强化学习（RL）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4automl"><span class="toc-number">7.3.4.</span> <span class="toc-text"> （4）AutoML</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5%E5%8D%8A%E7%9B%91%E7%9D%A3"><span class="toc-number">7.3.5.</span> <span class="toc-text"> （5）半监督</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6%E6%97%A0%E7%9B%91%E7%9D%A3"><span class="toc-number">7.3.6.</span> <span class="toc-text"> （6）无监督</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7%E8%BF%81%E7%A7%BB%E5%AD%A6%E4%B9%A0"><span class="toc-number">7.3.7.</span> <span class="toc-text"> （7）迁移学习</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#8%E5%85%83%E5%AD%A6%E4%B9%A0meta-learning"><span class="toc-number">7.3.8.</span> <span class="toc-text"> （8）元学习（Meta Learning）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#9%E8%81%94%E9%82%A6%E5%AD%A6%E4%B9%A0"><span class="toc-number">7.3.9.</span> <span class="toc-text"> （9）联邦学习</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E6%95%B0%E6%8D%AE%E6%99%BA%E8%83%BD%E6%8A%80%E6%9C%AF"><span class="toc-number">7.4.</span> <span class="toc-text"> 4. 数据智能技术</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E5%A4%A7%E6%95%B0%E6%8D%AE"><span class="toc-number">7.4.1.</span> <span class="toc-text"> （1）大数据</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%E6%95%B0%E6%8D%AE%E6%8C%96%E6%8E%98"><span class="toc-number">7.4.2.</span> <span class="toc-text"> （2）数据挖掘</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3%E7%9F%A5%E8%AF%86%E8%A1%A8%E5%BE%81%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1"><span class="toc-number">7.4.3.</span> <span class="toc-text"> （3）知识表征&amp;知识图谱</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4%E4%BF%A1%E6%81%AF%E6%A3%80%E7%B4%A2"><span class="toc-number">7.4.4.</span> <span class="toc-text"> （4）信息检索</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F"><span class="toc-number">7.4.5.</span> <span class="toc-text"> （5）推荐系统</span></a></li></ol></li></ol></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-Review/02.机器之心人工智能2021年技术趋势记录" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      机器之心-2020年AI进展及2021年趋势关注重点笔记
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/posts/d837735f.html" class="article-date">
+	  <time datetime="2021-02-26T12:22:15.000Z" itemprop="datePublished">2021-02-26</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/">人工智能</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" rel="tag">人工智能</a>, <a class="article-tag-link-link" href="/tags/%E5%8F%91%E5%B1%95%E8%B6%8B%E5%8A%BF/" rel="tag">发展趋势</a>
+  </span>
+
+
+        
+	<span class="article-read hidden-xs">
+	    <i class="icon icon-eye-fill" aria-hidden="true"></i>
+	    <span id="busuanzi_container_page_pv">
+			<span id="busuanzi_value_page_pv">0</span>
+		</span>
+	</span>
+
+
+<!--         <span class="post-comment"><i class="icon icon-comment"></i> <a href="/posts/d837735f.html#comments" class="article-comment-link">评论</a></span> -->
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数: 8.6k(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">预计: 31(分)</span>
+	
+
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h2 id="1-人工智能技术总趋势"><a class="markdownIt-Anchor" href="#1-人工智能技术总趋势"></a> 1. 人工智能技术总趋势</h2>
+<h3 id="无监督学习是未来技术突破的主要着力点"><a class="markdownIt-Anchor" href="#无监督学习是未来技术突破的主要着力点"></a> 无监督学习是未来技术突破的主要着力点</h3>
+<p>在语言技术和视觉技术这两个人工智能感知层应用落地最成熟的两个技术领域，无监督学习都是被提及频率最高的技术发展趋势。NLP领域目前最成功的大规模预训练语言模型（BERT等）证明了无监督学习在自言语言处理类任务里的可行性与发展潜力，transformer体系结构已成为NLP任务的实际标准，开始扩展至最相关的语音技术领域，而计算机视觉领域相比NLP更早使用注意力机制，但对于trnasformer模型的应用仍然受到卷及网络结构本身的限制。<strong>由Google Brain团队开发的最新视觉transformer模型（ViT）已经在突破这种限制上作出了可行的尝试，通过对大量数据的预训练，该模型已经可以成功迁移运营在多个中小型CV数据及（如ImageNet、CIFAR-100/VTAB等）上并取得目前最先进的SOTA表现</strong>。</p>
+<p>2018年的图领奖的共同获得者Geoffrey Hinton、Yann LeCun以及Yoshua Bengio几年的研究重点也一直放在无监督学习层面：<strong>Hinton近年来专注研究的胶囊网络的最新版本在无监督学习上找到了最合适发展方式；LeCun一致提倡的自监督学习方法则是一种“利用完整数据监督不完整数据修复”的特殊的无监督学习；而Bengio提倡的借鉴认知科学的符号推理相结合的方法同样需要研究先验知识如何降低数据的需求</strong>。三位业界巨擘都认识到无监督学习在解决深度学习缺乏场景数据和计算资源的问题上有巨大的可能性。诸多数据表明，无监督学习有利于解决目前人工智能技术的主要瓶颈之一：数据不足问题，与其希望管的少样本学习、模仿学习、自监督学习以及对比学习等都有着无限可能性。</p>
+<h3 id="移动设备和iot设备开始承担更多aiml计算"><a class="markdownIt-Anchor" href="#移动设备和iot设备开始承担更多aiml计算"></a> 移动设备和IoT设备开始承担更多AI/ML计算</h3>
+<p>随着移动智能手机和IoT设备的计算能力越来越强，用户和监督机构对数据隐私的保护越来越重视，同时移动网络5G的逐步部署落地，移动设备和IoT设备会进行更多的AI/ML的计算和训练。这使得人工智能离数据更近，离用户更近，也能更迅速地进行迭代升级。一方面，云计算发展依旧迅猛，并逐渐向边缘计算发展，助力物联网智能化；另一方面，AI芯片也主线走向云端、边缘端以及物联网设备终端，有实力的科技公司将AI算力打包成服务，既合理利用了自身多余的算力资源，又降低了不具备相关科研实力的中小企业可以以更低的成本使用到足够的资源，完成自身的AI开发与部署需求，这与近年来媒体讨论度颇高的无服务计算有着一致的思想理念。</p>
+<h3 id="图神经网络-土深度学习-大规模图计算平台将有很大发展空间"><a class="markdownIt-Anchor" href="#图神经网络-土深度学习-大规模图计算平台将有很大发展空间"></a> 图神经网络、土深度学习、大规模图计算平台将有很大发展空间</h3>
+<p>几年来，受社交网络、知识图谱以及生物信息学和神经科学中图形的重要性所驱动，将深度学习模型应用在不规则图结构的数据上逐渐成为了一种新兴趋势。这些基于图的神经网络（GNN）通常将神经网络模型应用在图中与点和边相关的特征上，传播运算结果并进行聚合，从而生成下一级的特征，目前已经在分类、嵌入、问答等多种不同的目标应用中取得最佳表现效果。2019~2020年，无论是在自然语言处理、计算机视觉、机器学习的相关学术会议上，图神经网络的相关论文均占据着不小比例。这种方法“<strong>将端到端学习与归纳推理相结合，业界普遍认为其有望解决深度学习无法处理的因果推理、可解释性等一系列瓶颈问题</strong>”。相比传统的文本、语音、图像数据格式，图结构是一种泛用性更强且更能代表现实世界真实情况的数据表示方式。<strong>随着知识图谱与推荐系统得到越来越广阔的应用，能够更切合相关数据表示的图神经网络深度学习未来大有可为</strong>。</p>
+<h2 id="2-人类语言技术"><a class="markdownIt-Anchor" href="#2-人类语言技术"></a> 2. 人类语言技术</h2>
+<h3 id="大规模预训练语言模型"><a class="markdownIt-Anchor" href="#大规模预训练语言模型"></a> 大规模预训练语言模型</h3>
+<p>2018~2019年里，尤其是2019年，大规模预训练语言模型似乎成了NLP领域技术指标突破逃不开的技术方法。在ELMo之前，深度学习在自然语言处理的主要应用方向在于从词到句子级别的分布式表征，word2vec是此类方法的典型代表。虽然一时间<strong>预训练的词向量在诸多自然语言处理任务上取得了不错的进展，但词向量本身都是上下文无关的，也就是一个词的向量表示在不同语境中总是相同的，这就意味着词向量无法解决语言技术里很大的一个障碍，一词多义问题。因此研究人员们开始在具体的下游任务中基于词向量的序列来做编码，这种seq2seq端到端的思想迅速取代了word2vec的热潮，而谷歌在这个基础上研发出的自注意力机制模型transformer可算是这个思想的集大成者</strong>。也正是同一时间，来自华盛顿大学的研究者开发出了ELMo模型，通过语言模型来获得一个上下文相关的预训练表示，并通过定制成功的用在了多个不同的下游任务上取得领先的表现效果。而<strong>仅仅针对文本进行丰富的encoding尚不足以覆盖所有NLP下游任务，尤其是QA、阅读理解等包含问询关系等多种复杂模式的情况下，下游任务的网络需要更多不同的结构调整，同一个模型在多个不同任务、甚至同一任务不同数据集上的表现差别仍然有待提高，这也就促使了BERT的诞生</strong>。BERT类模型使用大规模语料数据采取更深程度的预训练，从而形成一个更为通用的模型基底。这比覆盖上下文语境含义的词向量更进一步，而涉及到下游任务时也仅需要定制一个非常轻量级的输出层而不需要对模型骨架做重大调整。</p>
+<h2 id="3-计算机视觉"><a class="markdownIt-Anchor" href="#3-计算机视觉"></a> 3. 计算机视觉</h2>
+<p>计算机视觉下游主要技术任务：人脸识别、物体识别、目标检测、风格迁移、姿态估计、语义分割、图像降噪等；</p>
+<p>主要的模型方法：CNN、点云等；</p>
+<h3 id="学界问卷情况摘录重点"><a class="markdownIt-Anchor" href="#学界问卷情况摘录重点"></a> 学界问卷情况（摘录重点）</h3>
+<p><strong>图像处理与生成领域</strong>：较为成熟的部分为图像降噪、图像增强、图像超分辨率等技术任务，而图像生成被认为还是停留在“工程化验证其广泛使用的可行性以及解决规划化及成本等工程问题的阶段”，仍需要充分理解图像生成内在机制，优化参数控制能力。目前图像处理与生成的速度、泛化性、鲁棒性是瓶颈，以及用户对图像生成还不可控。</p>
+<p><strong>图像分割领域</strong>：专家认为其实时性、边缘锐化性扔有待提高，与多任务、多模态相结合也可以产生新的研究成果。</p>
+<p><strong>三维重建、三维推理领域</strong>：比点云模型在专家问卷中的得分更高一点，专家认为目前整个计算机视觉领域往三维视觉、机器人控制方面靠拢。3D视觉数据量大，数据结构无需不均匀，建模精度以及建模速度是主要的瓶颈。三维视觉的成本是否能够达到2D图像的技术量级，如何解决工程应用问题实现大规模应用同样是值得探索的方向。</p>
+<p><strong>视频理解领域</strong>：基本技术有待突破，近期内看不到跨越语义鸿沟的捷径，也许需要等待新的人工智能框架的到来，目前视频方面相关数据缺少标注且视频相比图像计算量过大，存在冗余信息，如何处理这些冗余信息以及如何高效利用复杂信息是一些视频理解的关键问题，实时性、视频理解的颗粒度需要重点考虑，图像和视频生成模型也会有不少突破的技术方向。</p>
+<h2 id="4-机器学习"><a class="markdownIt-Anchor" href="#4-机器学习"></a> 4. 机器学习</h2>
+<p>机器学习的六大主要技术领域：深度学习、强化学习、迁移学习、元学习、联邦学习和自动化机器学习。</p>
+<h3 id="生成对抗网络的技术性突破"><a class="markdownIt-Anchor" href="#生成对抗网络的技术性突破"></a> 生成对抗网络的技术性突破</h3>
+<p>生成对抗网络（GAN）与2014年被提出，并广泛应用于计算机视觉领域，例如图片生成等任务。GAN被美国《麻省理工科技评论》评为2018年“全球十大突破性技术”。截止2020年，GAN已有几百种变形，影响力较大的有2018年提出的BigGAN、SNGAN和AttnGAN，以及2019年提出的AutoGAN、StyleGAN等。2019年英伟达发布了StyleGAN2，这项能“混淆显示和虚拟界限”的技术被社区认为帮助解决AI社区面临的难题，如抓握式机器臂和自动驾驶。</p>
+<h3 id="多模态技术的崛起"><a class="markdownIt-Anchor" href="#多模态技术的崛起"></a> 多模态技术的崛起</h3>
+<p>随着深度学习技术的发展，不同的研究人员在进行特征识别时，会加上更多模态的特征，这也推动了多模态学习的发展。如在内容理解任务中，可看到自2019年起，CDG广告、CSIG音视频、IEG内容推荐、PCG信息流、TEG书评广告推荐和AI平台部团队、WXG看一看团队都有融合多模态特征进行内容理解需求。微软AI明星产品小冰不仅会作诗，还会唱歌作曲、阅读两宋、撰写新闻等，多模态识别技术正是小冰越来越像人一样沟通表达的关键之一。多模态技术同样也在视频网站、电商物流、自动驾驶等领域得到广泛应用。如爱奇艺退出的“只看TA”功能，优酷视频正在使用的视频帧、人脸帧的图向量检索，都离不开多模态识别技术的支持；京东淘宝等电商平台的“拍照购”、“拍立淘”的搜索技术背后也都是在计算机视觉技术下，使用了图像、文本和高层语义属性等多模态下的信息融合，才实现高精度的“以图搜图”功能；百度提出的“多模态深度语义理解”，则让AI实现了从“看清听清”到“看懂听懂”的进化。</p>
+<h2 id="5-数据智能技术"><a class="markdownIt-Anchor" href="#5-数据智能技术"></a> 5. 数据智能技术</h2>
+<h3 id="知识图谱快速发展模型-框架-数据集涌现"><a class="markdownIt-Anchor" href="#知识图谱快速发展模型-框架-数据集涌现"></a> 知识图谱：快速发展，模型、框架、数据集涌现</h3>
+<p>知识图谱作为一个相对年轻的技术领域，仍然处在发展期，各种知识表征模型和框架、知识图谱开放数据集层出不穷。2019年是知识图谱相关技术飞速发展的一年，世界顶级NLP大会ACL一次性收录了超30篇高质量知识图谱类论文，其中对于关系向量和图神经网络的论述将对知识图谱中关系补全、推理决策和认知计算都带来长足发展。作为集大数据和人工智能于一身的综合技术，知识图谱在人工智能浪潮中将迎来更多发展。</p>
+<h3 id="信息检索和推荐系统深度学习带来突破相关市场更加繁荣"><a class="markdownIt-Anchor" href="#信息检索和推荐系统深度学习带来突破相关市场更加繁荣"></a> 信息检索和推荐系统：深度学习带来突破，相关市场更加繁荣</h3>
+<p>信息检索和推荐系统的进步来源于深度学习技术的进步，无论是GAN、RNN等神经网络模型的应用，还是排序算法、优化算法的创新，信息检索和推荐系统发展的显著特征是，深度学习将发挥越来越重要的作用。近五年来信息检索的发展得益于自然语言处理和知识图谱的突破；推荐系统则越来越受到企业和市场的重视，推荐算法在视频网站、短视频平台、社交平台发挥着更加重要的角色，市场的繁荣又反哺着相关技术的创新突破。</p>
+<h2 id="6-前沿智能技术"><a class="markdownIt-Anchor" href="#6-前沿智能技术"></a> 6. 前沿智能技术</h2>
+<h3 id="敏感技术领域的相关规章制度-法律法规愈发完善"><a class="markdownIt-Anchor" href="#敏感技术领域的相关规章制度-法律法规愈发完善"></a> 敏感技术领域的相关规章制度、法律法规愈发完善</h3>
+<p>自lan Goodfellow在2015年的ICLR会议上以熊猫与长臂猿分类的例子对生成对抗样本方法和相关知识进行论述以后，<strong>深度学习下个神经网络算法的安全性和鲁棒性越发收到研究界的重视</strong>。2016年特斯拉手气自动驾驶致死车祸发生；同年DeepMind与OpenAI两大机构都针对人工智能安全方面的缺陷和挑战问题发表了相关论文；欧盟会议投票通过了史上最严格的数据保护法案GDPR。此后人工智能安全逐渐成为一个相对独立的新兴研究领域，各国政府和相关生态也纷纷发布相应的标准和规则，AI安全的研究开始与各项AI技术进步共同发展，相互促进。</p>
+<h2 id="7-技术领域大事件"><a class="markdownIt-Anchor" href="#7-技术领域大事件"></a> 7. 技术领域大事件</h2>
+<h3 id="1-人类语言技术"><a class="markdownIt-Anchor" href="#1-人类语言技术"></a> 1. 人类语言技术</h3>
+<ul>
+<li>2015 稀有词汇翻译方法Subword Units诞生</li>
+<li>2015 Christopher D. Manning提出全局和局部注意力机制</li>
+<li>2016 问答数据集SQuAD</li>
+<li>2016 Facebook AI Reasearch开发出快速文本分类器FastText</li>
+<li>2016 Parikh等在自然语言中使用attention机制。</li>
+<li>2016 GNMT</li>
+<li>2016 Quirk等第一次提出应用远程监督跨句子关系抽取</li>
+<li>2017 Vaswani等人提出了基于注意力机制的google transformer</li>
+<li>2017 OpenNMT</li>
+<li>2018 M.E.Peters，M.Neumann等人提出ELMo（Embeddings from Language Models）</li>
+<li>2018 OpenAI提出可迁移至多种NLP任务的通用模型GPT，结合了Transformer和无监督预训练，开启了预训练结合transformer模型的篇章</li>
+<li>2018 Google提出并开源了基于双向Transformer的大规模预训练语言模型BERT，该预训练模型能高效抽取文本信息并应用于各种NLP任务，该研究凭借预训练模型刷新了11项NLP任务的当前最优性能记录。</li>
+<li>2018 问答数据集SQuAD 2.0</li>
+<li>2018 GLUE</li>
+<li>2018 Understanding Back-Translation at Scale</li>
+<li>2018 NAACL2018最佳论文《Deep contextualized word representations》提出了一种进行深度语境化词表征，可对词使用的复杂特征（如句法和语义）和词使用在语言语境中的变化进行建模（即对多义词进行建模）</li>
+<li>2019 CMU与Google的研究者提出了一种泛化的自回归预训练语言模型XLNet，融合了当时最优自回归模型Transformer-XL的思路，克服了BERT本身一些先天缺陷，并在多个自然语言任务上取得了SOTA表现。</li>
+<li>2019 Transformer-XL</li>
+<li>2019 SuperGLUE</li>
+<li>2019 谷歌提出预训练模型T5，参数量达到了110亿，再次刷新Glue榜单，成为全新的NLP SOTA预训练模型</li>
+<li>2019 百度正式发布ERNIE 2.0，16项中英文任务超越BERT、XLNet，刷新SOTA。</li>
+<li>2019 OpenAI推出了GPT模型的升级版，号称“史上最强通用NLP模型”的GPT-2，并与2019年11越开源公开了其最完整的15亿参数模型。</li>
+<li>2019 RoBERTa（Robustly Optimized BERT Pretraining Approach）</li>
+<li>2019 ALBERT：A Lite BERT For Self-Supervised Learning Of Language Representations</li>
+<li>2019 HuggingFace Transformer Library</li>
+<li>2019 DistilBERT</li>
+<li>2019 TinyBERT</li>
+<li>2019 英伟达语音识别模型Jasper</li>
+<li>2020 谷歌开源语言可解释性工具LIT</li>
+<li>2020 CMU &amp; Google Brain提出收个与任务无关的轻量级预训练模型MobileBERT</li>
+<li>2020 AllenNLP 1.0</li>
+<li>2020 谷歌推出了NLP系列“芝麻街”的新成员Big Bird</li>
+<li>2020 对话智能新高度：百度发布超大规模开放域对话生成网络PLATO-2</li>
+<li>2020 哈佛、FAIR提出基于残差能量模型的文本生成</li>
+<li>2020 微软发布通用文档理解预训练模型LayoutLM</li>
+<li>2020 CLUECorpus2020：当前最大的开源中文语料库以及高质量中文预训练模型集合</li>
+<li>2020 微软发布自然语言理解的多任务工具包MT-DNN</li>
+<li>2020 微软发布Turing-NLG，史上最大的NLG模型</li>
+<li>2020 HuggingFace文本Tokenizer项目</li>
+<li>2020 OpenAI推出最新的预训练语言模型GPT-3，具有1750亿参数，堪称史上最大的AI模型</li>
+<li>2020 覆盖40种语言：谷歌发布多语言、多任务NLP新基准XTREME</li>
+<li>2020 ELECTRA（Efficiently Learning an Encoder that Classified Token Replacements Accurately</li>
+<li>2020 GPT API</li>
+</ul>
+<h3 id="2-计算机视觉"><a class="markdownIt-Anchor" href="#2-计算机视觉"></a> 2. 计算机视觉</h3>
+<ul>
+<li>2015 在Google Brain工作的基础山个，蒙特利尔大学的eYoshua Bengio对模型加入了attention（注意力机制），使解码器在生成语言的时候，能聚焦到图像上某一块区域的重点，这种机制的加入使得该模型的能力更加强大，在Flickr8k，Flickr30k和MS COCO上取得了历史最佳成绩。</li>
+<li>2015 He等学者提出了ResNet</li>
+<li>2015 Google 提出了FaceNet，同样是人脸识别领域的分水岭性工作</li>
+<li>2015 Parkhi等人提出了Deep Face Recognition</li>
+<li>2015 Olaf等提出了U-Net</li>
+<li>2016 Liang-Chieh Chen等人提出了DeepLab</li>
+<li>2016 Single-shot detection（SSD）被提出</li>
+<li>2016 FAIR实验室提出了Feature Pyramid Networks for Object Detection</li>
+<li>2016 Scott等人开发了一种新的GAN架构，以有效的桥接文本和图像建模之间的步骤</li>
+<li>2017 Peng Wang等人提出了VQA-machine</li>
+<li>2017 英伟达Jun-Yan Zhu等人提出了图像迁移算法CycleGAN</li>
+<li>2018 DeepMind带来的BigGAN创造性的将正交正则化的思想引入GAN</li>
+<li>2019 Adobe提出新型超分辨率方法：用神经网络迁移参照图像纹理</li>
+<li>2019 谷歌公布大型图像数据集Image V5，同时宣布即将开展开放图像挑战</li>
+<li>2019 英伟达的Ming-yu Liu等人提出了一种少样本无监督的图像到图像转换方法</li>
+<li>2019 李飞飞等人提出Auto-DeepLab：自动搜索图像语义分割架构</li>
+<li>2019 谷歌发布EfficientNet新架构，全面超越传统卷积神经网络</li>
+<li>2020 源于Facebook AI的RegNet超越EfficientNet，在GPU上实现了5倍加速</li>
+</ul>
+<h3 id="3-机器学习"><a class="markdownIt-Anchor" href="#3-机器学习"></a> 3. 机器学习</h3>
+<h4 id="1通用机器学习"><a class="markdownIt-Anchor" href="#1通用机器学习"></a> （1）通用机器学习</h4>
+<ul>
+<li>2015 微软ResNet图像识别准确率超越人类</li>
+<li>2017 Facebook提出目标实力分割框架Mask R-CNN，该架构较传统方法操作更简单、更灵活</li>
+<li>2017 研究人员首次提出基于深度学习的Transformer编码解码结构</li>
+<li>2018 Google AI十月发布的BERT论文，提出了一种深度双向Transformer模型，刷新了11种NLP任务的最佳表现</li>
+<li>2018 英伟达发布Video-to-Video（vid2vid）合成论文，模型合成视频效果惊人</li>
+<li>2018 华盛顿大学的Joseph Redmon等发布目标检测模型YoloV3</li>
+<li>2018 Google 提出并开源了基于双向Transformer的大规模预训练语言模型BERT，改与训练模型能高效抽取文本信息并应用于各种NLP任务，该研究凭借预训练模型刷新了11项NLP任务的当前最优性能记录。</li>
+<li>2019 哈佛大学和OpenAI发现“深度二次下降”的有趣现象，增大模型的参数规模，有一个区域会观察到loss反而会上升。</li>
+<li>2019 DeepMind提出新型端到端神经网络架构PrediNet</li>
+<li>2019 谷歌开源缩放模型EfficientNets：ImageNet准确率创纪录，效率提升10倍</li>
+<li>2019 Google AI和Carnegie Mellon大学发布Transformer-XL</li>
+</ul>
+<h4 id="2-生成对抗网络gan"><a class="markdownIt-Anchor" href="#2-生成对抗网络gan"></a> （2） 生成对抗网络（GAN）</h4>
+<ul>
+<li>2015 Radford等人提出DCGAN，后成为很多GAN家族网络的基础</li>
+<li>2017 Arjovsky等人提出WGAN</li>
+<li>2017 Min Lin针对判别器和生成器训练过程中不平衡的问题，提出了softmax GAN</li>
+<li>2017 Kim等人提出一种能够自动学习并发现跨域关系的生成对抗网络-DiscoGAN</li>
+<li>2017 Jun-Yan Zhu等人提出CycleGAN</li>
+<li>2018 DeepMind提出BigGAN，用于图像合成</li>
+<li>2019 Xingyu Gong等人提出AutoGAN，自动搜索生成对抗网络的机构。</li>
+<li>2019 Ian Goodfello等人将注意力机制引入GAN</li>
+<li>2019 DeepMind提出“史上最强非GAN生成器” VQ-VAE-2</li>
+<li>2019 英伟达提出新的GAN生成器架构-StyleGAN，也被称为GAN2.0</li>
+<li>2019 清华团队首次实现量子GAN，只用1个量子比特，准确率98.8%</li>
+</ul>
+<h4 id="3强化学习rl"><a class="markdownIt-Anchor" href="#3强化学习rl"></a> （3）强化学习（RL）</h4>
+<ul>
+<li>2016 UC Berkeley发表了深度强化学习应用在机器人技术的论文。最近几年在深度强化学习领域，与UC Berkeley合作紧密的OpenAI公司和DeepMind公司两者成为行业引领者</li>
+<li>2016 DeepMind发布AlphaGo，成为深度强化学习应用的著名案例</li>
+<li>2016 Voloymyr Mnih等提出并行式的深度强化学习（A3C），在多数Atari游戏学习中胜出。</li>
+<li>2016 Barret等发表论文《Neural Architecture Search With Reinforcement Learning》将强化学习应用于神经架构搜索</li>
+<li>2017 DeepMind公司发布AlphaZero论文，进阶版的AlphaZero算法将围棋领域扩展到国际象棋、日本象棋领域，且无需人类专业知识就能击败各自领域的世界冠军。</li>
+<li>2018 DeepMind在Nature Neuroscience发表新论文提出了一种新型的元强化学习算法</li>
+<li>2018 OpenAI Five在Dota2游戏上战胜了优秀的人类玩家</li>
+<li>2019 DeepMind在《Nature》杂志发表了AlphaStar的最新研究进展，展示了AI在没有任何游戏限制的情况下已经达到星际争霸2人类对战天梯的顶级水平，在Battle.net上的排名已经超越了99.8%的活跃玩家</li>
+<li>2020 DeepMind发布分布式强化学习框架Acme，智能体并行性加强</li>
+<li>2020 DeepMind推出Agent57，在所有雅达利游戏上超越人类玩家</li>
+<li>2020 深度强化学习智能体在赛车游戏中一展超人表现</li>
+</ul>
+<h4 id="4automl"><a class="markdownIt-Anchor" href="#4automl"></a> （4）AutoML</h4>
+<ul>
+<li>2017 微软发布自动机器学习工具Neural Network Intelligence</li>
+<li>2018 谷歌开源AdaNet，可集成学习的AutoML</li>
+<li>2018 Texas A&amp;M大学的DATA实验室和社区贡献者开发了Auto-Keras</li>
+<li>2018 通过在AutoML中结合进化算法执行架构搜索，谷歌开发出了当前最佳的图像分类模型AmoebaNet</li>
+<li>2019  Xingyu Gong等人提出AutoGAN，自动搜索生成对抗网络的机构。</li>
+<li>2019 何恺明组提出新型网络设计范式，能够充分结合手工设计和神经架构搜索的优势</li>
+</ul>
+<h4 id="5半监督"><a class="markdownIt-Anchor" href="#5半监督"></a> （5）半监督</h4>
+<ul>
+<li>2015 Rasmus等提出半监督ladderNet</li>
+<li>2016 Tim等人将生成对抗网络应用在半监督学习上</li>
+<li>2018 难打和第四范式提出Auto-SSL使半监督学习自动化</li>
+<li>2018 Sebastian等将半监督学习和迁移学习相结合</li>
+<li>2018 阿里提出应用LocalizedGAN进行半监督训练</li>
+<li>2019 李飞飞团队提出一种补全视觉信息库的半监督方法</li>
+</ul>
+<h4 id="6无监督"><a class="markdownIt-Anchor" href="#6无监督"></a> （6）无监督</h4>
+<ul>
+<li>2015 Radford提出非监督式的DCGANs</li>
+<li>2018 FAIR提出用聚类方法结合卷积网络，实现无监督端到端图像分类</li>
+<li>2018 Facebook在EMNLP2018上的论文《Phrase-Based &amp; Neural Unsupervised Machine Translation》利用跨字嵌入（Cross Word Embedding），提升了高达11BLEU</li>
+<li>2018 发布无监督语言翻译模型，向完全无监督词对齐再进一步</li>
+<li>2019 DeepMind最新发布神经网络MONet无监督分割大法，为游戏而生</li>
+<li>2019 来自UCLA与Google Brain的研究者提出了一种无监督的生成模型Self-supervised GAN，它将对抗训练与自监督学习相结合</li>
+<li>2019 斯坦福AI研究院在论文《Uncertainty Autoencoders: Learning Compressed Representations via Variational Infomation Maximization》提出新的无监督表示学习框架</li>
+<li>2018 DeepMind在论文《Are Labels Required for Improving Adversarial Robustness？》提出无监督对抗训练只需10%的CIFAR10标签便可获得SOTA稳健精度</li>
+<li>2019 CapsNet的作者Hinton等联合牛津大学的研究者提出了胶囊网络的改进版本–堆栈式胶囊自编码器。这种胶囊自编码器可以无监督地学习图像中的特征，并在无监督分类任务取得最佳或接近最佳的表现。这也是胶囊网络第一次在无监督领域取得新的突破。</li>
+</ul>
+<h4 id="7迁移学习"><a class="markdownIt-Anchor" href="#7迁移学习"></a> （7）迁移学习</h4>
+<ul>
+<li>2015 Junlin Hu等人提出深度度量迁移学习</li>
+<li>2017 杨强团队提出传递迁移学习</li>
+<li>2017 迁移学习领域的新方向，与在线、增量学习结合</li>
+<li>2018 提出一种新的终身学习框架</li>
+<li>2018 Cybernetics提出一个通用的迁移学习框架，对不同的domain进行不同的特征变换</li>
+<li>2019 Chen Qu等人基于迁移学习进行深度文本匹配</li>
+<li>2019 Prithviraj等人提出利用知识图谱迁移学习来优化深度强化学习在文字冒险类游戏方面的表现</li>
+<li>2019 Q. Shi等人将迁移学习应用在高光谱图像分类上</li>
+<li>2020 D.Xi等人提出基于分类注意网络的领域自适应深度情感分析</li>
+</ul>
+<h4 id="8元学习meta-learning"><a class="markdownIt-Anchor" href="#8元学习meta-learning"></a> （8）元学习（Meta Learning）</h4>
+<ul>
+<li>2016 Jane X Wang等人提出了深度元强化学习</li>
+<li>2017 Chelsea等人提出与模型无关的元学习（model-agnostic meta-learning，MAML）</li>
+<li>2018 Jiatao Gu等人在2018年提出的一项研究建议引入的模型不可知元学习算法（MAML），用于低资源神经机器翻译（NMT）</li>
+<li>2018 Chengxiang Yin等人提出ADML(ADversarial Meta-Learner)，用对抗性样本优化模型的初始化对抗性设定。</li>
+<li>2019 Zhaojiang Lin等人提出用模型不可知原算法（MAML）进行不需人工描述的，仅需少量对话样本就可以学习对话的系统</li>
+<li>2019 Kyle等人开发了一种无监督元学习方法，显示地优化了从少量数据学习各种任务的能力，开启了无需进行显示任务描述的元学习大门</li>
+<li>2019 伯克利大学人工智能实验室提出在线元学习，弥补了元学习缺乏持续学习的缺陷。</li>
+<li>2019 Facebook人工智能实验室对元学习中近似嵌套优化问题解决方案的通用模式进行了形式化。</li>
+<li>2019 伯克利AI研究院提出新的元强化学习算法</li>
+</ul>
+<h4 id="9联邦学习"><a class="markdownIt-Anchor" href="#9联邦学习"></a> （9）联邦学习</h4>
+<ul>
+<li>2016 谷歌的McMahan等人发表首篇联邦学习论文，介绍了联邦学习的基础理念</li>
+<li>2018 英特尔与宾夕法尼亚大学生物医学图像计算与分析中心（CBICA）发表研究成果，是联邦学习在医学领域的第一个概念验证性实际应用</li>
+<li>2019 微众银行开源其首个联邦学习工业级技术框架FATE（Federated AI Technology Enabler），FATE支持联邦学习架构体系与各种机器学习算法的安全计算，实现了基于同态加密和多方计算（MPC）的安全计算协议，能够帮助多个组织机构在符合数据安全和政府法规前提下，有效和协作地进行数据使用和联合建模</li>
+<li>2019 Yang Q.等人发表论文介绍联邦学习基本架构，定义了三大联邦学习类别以及模型架构</li>
+<li>2019 谷歌发表论文描述基于TensorFlow构建的全球首个产品级联邦学习系统</li>
+<li>2020 联邦学习国际标准草案完成，正式标准预计年中出台</li>
+<li>2020 获IEEE全票通过，首个联邦学习国际标准将正式推行</li>
+</ul>
+<h3 id="4-数据智能技术"><a class="markdownIt-Anchor" href="#4-数据智能技术"></a> 4. 数据智能技术</h3>
+<h4 id="1大数据"><a class="markdownIt-Anchor" href="#1大数据"></a> （1）大数据</h4>
+<ul>
+<li>2015 Murtaza整合了从业者和学者的定义，对大数据进行了综合描述</li>
+<li>2016 Nada等提出了大数据，分析和决策（B-DAD）框架</li>
+<li>2016 大数据“十三五”规划出台</li>
+<li>2019 清华大学人工智能研究院成立大数据智能研究中心</li>
+<li>2019 阿里巴巴内部版本Blink正式开源</li>
+<li>2019 Databricks公司推出了自己的统一分析平台（Unified Analytics Platform），目标是使客户在一个系统里解决尽可能多的数据需求</li>
+<li>2020 100多所高校新增人工智能专业，教育部2019年度普通高等学校本科专业备案和审批结果公布</li>
+<li>2020 人工智能和大数据在疫情防控中大显身手</li>
+<li>2020 MIT宣布永久下架包含种族和性别歧视标签图像的Tiny Images数据集</li>
+<li>2020 美国白宫发布首个AI年度报告</li>
+<li></li>
+</ul>
+<h4 id="2数据挖掘"><a class="markdownIt-Anchor" href="#2数据挖掘"></a> （2）数据挖掘</h4>
+<ul>
+<li>2016 机器学习开始兴起，数据科学在机器学习领域已经根深蒂固，深度学习苗头出现</li>
+<li>2017 华人学者叶艳芳博士《HinDroid: An Intelligent Android Malware Detection System Based on Structured Heterogeneous Infomation Network》获KDD 2017最佳论文</li>
+<li>2018 《Adversarial Attacks on Neural Networks for Graph Data》获得KDD 2018最佳论文</li>
+<li>2018 华人博士Kun Dong的《Network Density of States》获得KDD 2019 最佳论文</li>
+<li>2020 周志华等人提出可微XGBoost算法sGBM，速度提升、准确率更胜一筹</li>
+</ul>
+<h4 id="3知识表征知识图谱"><a class="markdownIt-Anchor" href="#3知识表征知识图谱"></a> （3）知识表征&amp;知识图谱</h4>
+<ul>
+<li>2015 Mitchell等人提出never-ending learning（NELL），通过不断地阅读获取知识，并不断提升学习知识的能力以及利用所学知识进行推理等逻辑思维</li>
+<li>2016 Lisa等人发表论文《Towards a Definition of Knowledge Graphs》详述了知识图谱的定义</li>
+<li>2017 国内哆嗦高效发起cnSchema.org项目，旨在利用社区力量维护开放域知识图谱的Schema标准</li>
+<li>2017 清华大学开源只是表示学习平台OpenKE</li>
+<li>2018 Shib等人提出了HyTE模型，不仅能够利用时间导向进行知识图谱图推理，还能够为那些缺失时间注释的事实预测temporal scopes。</li>
+<li>2018 Muhao等人考虑到多语言知识图谱中具有对实体的文字性描述，提出一种基于嵌入（Embedding）的策略-多语言知识图谱嵌入（KGEM）。</li>
+<li>2019 清华大学和华为诺亚方舟实验室联合发表了一项研究，将知识图谱中的多信息实体（informative entity）可以作为外部知识改善语言表征。该研究结合大规模语料库和知识图谱训练出增强版的语言表征模型（ERNIE），性能媲美当前最优的BERT模型</li>
+<li>2019 Junheng Hao等人提出JOIE，联合知识图谱实例和本体概念的通用表示学习</li>
+<li>2019 OwnThink平台在Github上开源了史上最大规模1.4亿中文知识图谱</li>
+<li>2019 微软核心业务即将上线Project Cortex: AI知识图谱大幅提升企业效率</li>
+<li>2020 OpenKG组织先后发布多个新冠知识图谱开放数据集</li>
+</ul>
+<h4 id="4信息检索"><a class="markdownIt-Anchor" href="#4信息检索"></a> （4）信息检索</h4>
+<ul>
+<li>2017 汪军等人提出IRGAN首次将GAN应用到信息检索任务上</li>
+<li>2018 卡内基美隆大学和谷歌大脑的研究者提出QANet</li>
+<li>2018 来自微软Bing的研究院在KDD 2018上发表了论文《Recurrent Binary Embedding for GPU-Enabled Exhustive Retrieval from Billion-Scale Semantic Vectors》，提出了能够生成紧凑语义表征的“循环二分嵌入（RBE）”，这些表征可存储在GPU上，RBE使得十亿级的检索能够实时进行</li>
+<li>2019 EMNLP最佳论文《Specializing Word Embeddings (for Parsing) by Information Bottleneck》对预训练词嵌入上使用变差信息瓶颈（Variational Infomation  Bottleneck）提出了新颖应用</li>
+</ul>
+<h4 id="5推荐系统"><a class="markdownIt-Anchor" href="#5推荐系统"></a> （5）推荐系统</h4>
+<ul>
+<li>2015 郭贵兵等人创建了推荐系统开源项目LibRec - 一个领先的基于jav阿德推荐系统算法库</li>
+<li>2016 Youtube发表论文，将深度神经网络应用推荐系统中，实现了从大规模可选的推荐内容中找到最有可能的推荐结果</li>
+<li>2016 基于推荐的短视频App抖音推出并引爆社交网络</li>
+<li>2016 第三方检测机构易观发布了一个具有“里程碑意义”的数据：“资讯信息分发市场算法推送的内容将超过50%”</li>
+<li>2016 Benigno等人提出了一种易于处理的方法NADE(Neural Autoregressive Distribution Estimation)，以对源数据的真是分布进行近似计算，并且可以再几个试验性数据集中产生最一流的推荐精度（与其他基于深度学习的推荐模型相比）</li>
+<li>2017 V.Boginad等人提出了一个RNN模型结合停留时间（用户花在某个推荐条目上的时间）提升基于会话的推荐系统在电子商务数据集（Yoochoose）上的推荐准确度</li>
+<li>2018 Tran等人发表基于用户评级历史的深度学习技术，提出了一个注意力群体推荐模型来解决群体推荐问题，第一个将Attention机制应用到群体推荐中</li>
+<li>2018 DK Chae等人提出CFGAN: 一种基于GAN的协同过滤推荐框架，提供了一种通过GAN来进行推荐任务的新思路</li>
+<li>2018 Criteo人工智能实验室的Stephen等提出因果嵌入的推荐方法获得RecSys 2018最佳长论文</li>
+<li>2019 RecSys 2019最佳论文《Are We Really Making Much Progress? A Worrying Analysis of Recent Neural Recommendation Approaches》认为现有现有DNN-based推荐算法带来的基本上都是伪提升</li>
+<li>2019 微软开源Recommenders：企业级可扩展推荐系统实践指南</li>
+<li>2019 SIGIR 2019最佳论文《Variance Reduction in Gradient Exploration for Online Learning to Rank》介绍了一种降低Online Learning to Rank优化算法中方差的工作</li>
+<li>2019 Eugene等人提出了一种名为SLATE-Q的Q-Learning算法，讲一个slate的推荐序列分解成多个items，计算长期收益LTV（Long-term Value），将长期收益加入排序多目标中进行建模优化推荐。</li>
+</ul>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="https://www.notlate.net/posts/d837735f.html" title="机器之心-2020年AI进展及2021年趋势关注重点笔记" target="_blank" rel="external">https://www.notlate.net/posts/d837735f.html</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<!-- <div class="panel panel-default panel-badger"> -->
+<!--   <div class="panel-body"> -->
+<!--     <figure class="media"> -->
+<!--       <div class="media-left"> -->
+<!--         <a href="" target="_blank" class="img-burn thumb-sm visible-lg"> -->
+<!--           <img src="/images/logo.png" class="img-rounded w-full" alt=""> -->
+<!--         </a> -->
+<!--       </div> -->
+<!--       <div class="media-body"> -->
+<!--         <h3 class="media-heading"><a href="" target="_blank"><span class="text-dark">ACDance</span><small class="ml-1x">一无所知，或是没被理解；&lt;br/&gt;一事无成，或是没被重视。</small></a></h3> -->
+<!--         <div></div> -->
+<!--       </div> -->
+<!--     </figure> -->
+<!--   </div> -->
+<!-- </div> -->
+
+
+    </div>
+  </article>
+  
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/posts/7ed931fc.html" title="深度学习推荐系统-总结01：推荐算法发展里程碑"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/posts/6cc588ae.html" title="智源研究院-2020年AI进展及2021年趋势关注重点笔记"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+        <span>[&nbsp;</span><span>文章目录</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>赏</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>感谢您的支持，我会继续努力的!</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/alipayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开支付宝扫一扫，即可进行扫码打赏哦</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechatpayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开微信扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> 支付宝</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> 微信支付</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/NotLateYet" target="_blank" title="Github" ><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" ><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        &copy; 2021 ACDance
+        
+<!--         <div class="publishby"> -->
+<!--         	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>. -->
+<!--         </div> -->
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: true,
+    notify: false,
+    appId: 'rjHvwlAnqIFCN31UINTnwMEL-gzGzoHsz',
+    appKey: '2Q9D5J3pYGojfU6ppehPEnB3',
+    placeholder: '欢迎提出意见和建议',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: false
+  });
+  </script>
+
+     
+
+
+
+  <script src="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.3.5/dist/jquery.fancybox.min.js"></script>
+  <script>
+  //利用 FancyBox 实现点击图片放大
+  $(document).ready(function() {
+    $('article img').not('[hidden]').not('.panel-body img').each(function() {
+      var $image = $(this);
+      var imageCaption = $image.attr('alt');
+      var $imageWrapLink = $image.parent('a');
+      if ($imageWrapLink.length < 1) {
+        var src = this.getAttribute('src');
+        var idx = src.lastIndexOf('?');
+        if (idx != -1) {
+          src = src.substring(0, idx);
+        }
+        $imageWrapLink = $image.wrap('<a href="' + src + '"></a>').parent('a');
+      }
+      $imageWrapLink.attr('data-fancybox', 'images');
+      if (imageCaption) {
+        $imageWrapLink.attr('data-caption', imageCaption);
+      }
+    });
+    $().fancybox({
+      selector: '[data-fancybox="images"]',
+      hash: false,
+      loop: false,
+    });
+  });
+  </script>
+
+
+
+
+    <script defer>
+var _hmt = _hmt || [];
+(function() {
+    var hm = document.createElement("script");
+    hm.src = "//hm.baidu.com/hm.js?8efc12c51b549f06ae0c6a3c0d0f2e56";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>

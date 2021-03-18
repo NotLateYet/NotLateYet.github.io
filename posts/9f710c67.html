@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  <meta name="google-site-verification" content="z98GT4PZdRgrcES2hf9DTxMShekuK_k-48TNAutBYZg" />
+  
+  
+    <meta name="msvalidate.01" content="8C31B0044947BFFD6869DD1B5E5E8268" />
+  
+  
+  <meta name="baidu-site-verification" content="code-fDSTdt2hx7" />
+  
+  
+  <title>深度学习推荐系统-笔记12：模型评估 | Not late</title>
+  <meta name="description" content="1. 离线评估  （1）介绍 离线评估是最常用、最基本的。顾名思义就是：我们将模型部署于线上环境之前，在离线环境下进行的评估。由于不用部署到生产环境，“离线评估”没有线上部署的工程风险，也不会浪费宝贵的线上流量资源，而且具有测试时间短，可多组并行，以及能够利用丰富的线下计算资源等诸多优点。  （2）评估方法  ① Holdout 检验。 最基础，最常用的离线评估方法，它将原始的样本集合随机划分为">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深度学习推荐系统-笔记12：模型评估">
+<meta property="og:url" content="https://www.notlate.net/posts/9f710c67.html">
+<meta property="og:site_name" content="Not late yet">
+<meta property="og:description" content="1. 离线评估  （1）介绍 离线评估是最常用、最基本的。顾名思义就是：我们将模型部署于线上环境之前，在离线环境下进行的评估。由于不用部署到生产环境，“离线评估”没有线上部署的工程风险，也不会浪费宝贵的线上流量资源，而且具有测试时间短，可多组并行，以及能够利用丰富的线下计算资源等诸多优点。  （2）评估方法  ① Holdout 检验。 最基础，最常用的离线评估方法，它将原始的样本集合随机划分为">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gitee.com/acdance/img/raw/master/blogs/image-20210117172459000.png">
+<meta property="og:image" content="https://gitee.com/acdance/img/raw/master/blogs/image-20210315155746765.png">
+<meta property="og:image" content="https://gitee.com/acdance/img/raw/master/blogs/recsys12-good.gif">
+<meta property="og:image" content="https://gitee.com/acdance/img/raw/master/blogs/recsys12-bad.gif">
+<meta property="og:image" content="https://gitee.com/acdance/img/raw/master/blogs/recsys12-common.gif">
+<meta property="og:image" content="https://gitee.com/acdance/img/raw/master/blogs/e0da06ee473e3f551ac2cyy987957d7b.jpeg">
+<meta property="og:image" content="https://gitee.com/acdance/img/raw/master/blogs/image-20210117191553437.png">
+<meta property="og:image" content="https://gitee.com/acdance/img/raw/master/blogs/image-20210117192433919.png">
+<meta property="og:image" content="https://gitee.com/acdance/img/raw/master/blogs/da57fcb9287b31ec436a4dce87f11c1b.jpg">
+<meta property="og:image" content="https://gitee.com/acdance/img/raw/master/blogs/3e41699be3fa13709c7e898c4f07bf64.jpg">
+<meta property="og:image" content="https://gitee.com/acdance/img/raw/master/blogs/e2257304c4e450138f81ea9460ddef29.jpg">
+<meta property="article:published_time" content="2021-01-05T14:28:20.000Z">
+<meta property="article:modified_time" content="2021-03-18T15:04:38.586Z">
+<meta property="article:author" content="ACDance">
+<meta property="article:tag" content="模型评估">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/acdance/img/raw/master/blogs/image-20210117172459000.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://www.notlate.net/posts/9f710c67.html">
+  
+    <link rel="alternate" href="/atom.xml" title="Not late yet" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    <link href="//cdn.jsdelivr.net/npm/katex@0.9.0/dist/katex.min.css" rel="stylesheet">
+  
+  
+  
+    <link href="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.3.5/dist/jquery.fancybox.min.css" rel="stylesheet">
+  
+  
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+<body class="main-center theme-blue" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="" target="_blank">
+          <img class="img-circle img-rotate" src="/images/logo.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">ACDance</h2>
+<!--         <h3 id="title" class="hidden-xs hidden-sm hidden-md">一无所知，或是没被理解；&lt;br/&gt;一事无成，或是没被重视。</h3> -->
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">
+            一无所知，或是没被理解；<br/>一事无成，或是没被重视。
+        </h3>
+<!--         <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> </small> -->
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="检索..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/NotLateYet" target="_blank" title="Github" ><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" ><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/">人工智能</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F/">分布式</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/">深度学习推荐系统</a><span class="category-list-count">13</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%A1%E7%AE%97%E5%B9%BF%E5%91%8A/">计算广告</a><span class="category-list-count">16</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/">论文笔记</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/ADX/" style="font-size: 13px;">ADX</a> <a href="/tags/DSP/" style="font-size: 13px;">DSP</a> <a href="/tags/Embedding/" style="font-size: 13px;">Embedding</a> <a href="/tags/GNN/" style="font-size: 13px;">GNN</a> <a href="/tags/MMoE/" style="font-size: 13px;">MMoE</a> <a href="/tags/SSP/" style="font-size: 13px;">SSP</a> <a href="/tags/mongodb/" style="font-size: 13.5px;">mongodb</a> <a href="/tags/redis/" style="font-size: 13.5px;">redis</a> <a href="/tags/%E4%B8%9A%E7%95%8C%E4%B8%BB%E6%B5%81/" style="font-size: 13px;">业界主流</a> <a href="/tags/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" style="font-size: 13.25px;">人工智能</a> <a href="/tags/%E4%BC%A0%E7%BB%9F%E7%AE%97%E6%B3%95/" style="font-size: 13px;">传统算法</a> <a href="/tags/%E4%BF%A1%E6%81%AF%E6%B5%81/" style="font-size: 13px;">信息流</a> <a href="/tags/%E5%8D%8F%E5%90%8C%E8%BF%87%E6%BB%A4/" style="font-size: 13px;">协同过滤</a> <a href="/tags/%E5%8E%9F%E7%94%9F%E5%B9%BF%E5%91%8A/" style="font-size: 13px;">原生广告</a> <a href="/tags/%E5%8F%91%E5%B1%95%E8%B6%8B%E5%8A%BF/" style="font-size: 13.25px;">发展趋势</a> <a href="/tags/%E5%8F%97%E4%BC%97%E5%AE%9A%E5%90%91/" style="font-size: 13px;">受众定向</a> <a href="/tags/%E5%90%88%E7%BA%A6%E5%B9%BF%E5%91%8A/" style="font-size: 13px;">合约广告</a> <a href="/tags/%E5%9C%A8%E7%BA%BF%E5%B9%BF%E5%91%8A/" style="font-size: 13.25px;">在线广告</a> <a href="/tags/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/" style="font-size: 13px;">工程实践</a> <a href="/tags/%E5%B9%BF%E5%91%8A%E5%9F%BA%E7%A1%80/" style="font-size: 13px;">广告基础</a> <a href="/tags/%E5%B9%BF%E5%91%8A%E6%8A%95%E6%94%BE/" style="font-size: 13px;">广告投放</a> <a href="/tags/%E5%B9%BF%E5%91%8A%E7%BD%91%E7%BB%9C/" style="font-size: 13px;">广告网络</a> <a href="/tags/%E6%8E%A2%E7%B4%A2%E4%B8%8E%E5%88%A9%E7%94%A8/" style="font-size: 13px;">探索与利用</a> <a href="/tags/%E6%8E%A8%E8%8D%90%E6%A8%A1%E5%9E%8B/" style="font-size: 13px;">推荐模型</a> <a href="/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/" style="font-size: 13.75px;">推荐系统</a> <a href="/tags/%E6%90%9C%E7%B4%A2%E5%B9%BF%E5%91%8A/" style="font-size: 13px;">搜索广告</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E4%BA%A4%E6%98%93/" style="font-size: 13px;">数据交易</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%B7%A5/" style="font-size: 13px;">数据加工</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86/" style="font-size: 13px;">数据处理</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 14px;">数据库</a> <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" style="font-size: 13px;">机器学习</a> <a href="/tags/%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF/" style="font-size: 13px;">核心技术</a> <a href="/tags/%E6%A8%A1%E5%9E%8B%E8%AF%84%E4%BC%B0/" style="font-size: 13px;">模型评估</a> <a href="/tags/%E6%B5%8B%E8%AF%95%E6%A1%86%E6%9E%B6/" style="font-size: 13px;">测试框架</a> <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" style="font-size: 13.25px;">深度学习</a> <a href="/tags/%E7%82%B9%E5%87%BB%E7%8E%87%E9%A2%84%E6%B5%8B/" style="font-size: 13px;">点击率预测</a> <a href="/tags/%E7%89%B9%E5%BE%81%E5%B7%A5%E7%A8%8B/" style="font-size: 13px;">特征工程</a> <a href="/tags/%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/" style="font-size: 13px;">知识图谱</a> <a href="/tags/%E7%A8%8B%E5%BA%8F%E5%8C%96%E4%BA%A4%E6%98%93/" style="font-size: 13px;">程序化交易</a> <a href="/tags/%E7%AB%9E%E4%BB%B7%E5%B9%BF%E5%91%8A/" style="font-size: 13px;">竞价广告</a> <a href="/tags/%E7%BA%BF%E4%B8%8A%E6%9C%8D%E5%8A%A1/" style="font-size: 13px;">线上服务</a> <a href="/tags/%E8%AE%A1%E7%AE%97%E5%B9%BF%E5%91%8A/" style="font-size: 13px;">计算广告</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">推荐阅读</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled ">
+        
+          <li>
+<!--              -->
+<!--             <div class="item-thumb"> -->
+<!--               <a href="/posts/d837735f.html" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+ -->
+<!--             </div> -->
+<!--              -->
+            <div class="item-inner">
+<!--               <p class="item-category"> -->
+<!--                 <a class="category-link" href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/">人工智能</a> -->
+<!--               </p> -->
+              <p class="item-title">
+                <a href="/posts/d837735f.html" class="title">机器之心-2020年AI进展及2021年趋势关注重点笔记</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-02-26T12:22:15.000Z" itemprop="datePublished">2021-02-26</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+<!--              -->
+<!--             <div class="item-thumb"> -->
+<!--               <a href="/posts/6cc588ae.html" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+ -->
+<!--             </div> -->
+<!--              -->
+            <div class="item-inner">
+<!--               <p class="item-category"> -->
+<!--                 <a class="category-link" href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/">人工智能</a> -->
+<!--               </p> -->
+              <p class="item-title">
+                <a href="/posts/6cc588ae.html" class="title">智源研究院-2020年AI进展及2021年趋势关注重点笔记</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-02-24T13:36:22.000Z" itemprop="datePublished">2021-02-24</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+<!--              -->
+<!--             <div class="item-thumb"> -->
+<!--               <a href="/posts/a08c2ad5.html" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+ -->
+<!--             </div> -->
+<!--              -->
+            <div class="item-inner">
+<!--               <p class="item-category"> -->
+<!--                 <a class="category-link" href="/categories/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/">论文笔记</a> -->
+<!--               </p> -->
+              <p class="item-title">
+                <a href="/posts/a08c2ad5.html" class="title">GNN笔记01-基础原理与应用</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-02-04T06:30:40.000Z" itemprop="datePublished">2021-02-04</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+<!--              -->
+<!--             <div class="item-thumb"> -->
+<!--               <a href="/posts/2c4e9dc8.html" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+ -->
+<!--             </div> -->
+<!--              -->
+            <div class="item-inner">
+<!--               <p class="item-category"> -->
+<!--                 <a class="category-link" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/">深度学习推荐系统</a> -->
+<!--               </p> -->
+              <p class="item-title">
+                <a href="/posts/2c4e9dc8.html" class="title">深度学习推荐系统-笔记13：探究业界主流的推荐系统解决方案</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-01-05T15:24:40.000Z" itemprop="datePublished">2021-01-05</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+<!--              -->
+<!--             <div class="item-thumb"> -->
+<!--               <a href="/posts/9f710c67.html" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+ -->
+<!--             </div> -->
+<!--              -->
+            <div class="item-inner">
+<!--               <p class="item-category"> -->
+<!--                 <a class="category-link" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/">深度学习推荐系统</a> -->
+<!--               </p> -->
+              <p class="item-title">
+                <a href="/posts/9f710c67.html" class="title">深度学习推荐系统-笔记12：模型评估</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-01-05T14:28:20.000Z" itemprop="datePublished">2021-01-05</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">三月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">二月 2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">十月 2020</a><span class="archive-list-count">16</span></li></ul>
+    </div>
+  </div>
+
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E7%A6%BB%E7%BA%BF%E8%AF%84%E4%BC%B0"><span class="toc-number">1.</span> <span class="toc-text"> 1. 离线评估</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.1.</span> <span class="toc-text"> （1）介绍</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%E8%AF%84%E4%BC%B0%E6%96%B9%E6%B3%95"><span class="toc-number">1.2.</span> <span class="toc-text"> （2）评估方法</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1-holdout-%E6%A3%80%E9%AA%8C"><span class="toc-number">1.2.1.</span> <span class="toc-text"> ① Holdout 检验。</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-%E4%BA%A4%E5%8F%89%E6%A3%80%E9%AA%8C"><span class="toc-number">1.2.2.</span> <span class="toc-text"> ② 交叉检验</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3-%E8%87%AA%E5%8A%A9%E6%B3%95%E4%B8%8D%E5%A4%AA%E5%B8%B8%E7%94%A8"><span class="toc-number">1.2.3.</span> <span class="toc-text"> ③ 自助法（不太常用）</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#4-%E6%97%B6%E9%97%B4%E5%88%87%E5%89%B2"><span class="toc-number">1.2.4.</span> <span class="toc-text"> ④ 时间切割</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#5-%E7%A6%BB%E7%BA%BFreplay"><span class="toc-number">1.2.5.</span> <span class="toc-text"> ⑤ 离线Replay</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3%E6%80%BB%E7%BB%93"><span class="toc-number">1.3.</span> <span class="toc-text"> （3）总结</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4%E7%BB%8F%E5%85%B8%E9%97%AE%E7%AD%94"><span class="toc-number">1.4.</span> <span class="toc-text"> （4）经典问答</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E8%AF%84%E4%BC%B0%E6%8C%87%E6%A0%87"><span class="toc-number">2.</span> <span class="toc-text"> 2. 评估指标</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E4%BD%8E%E9%98%B6%E8%AF%84%E4%BC%B0%E6%8C%87%E6%A0%87"><span class="toc-number">2.1.</span> <span class="toc-text"> （1）低阶评估指标</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1-%E5%87%86%E7%A1%AE%E7%8E%87"><span class="toc-number">2.1.1.</span> <span class="toc-text"> ① 准确率：</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-%E7%B2%BE%E7%A1%AE%E7%8E%87%E4%B8%8E%E5%8F%AC%E5%9B%9E%E7%8E%87"><span class="toc-number">2.1.2.</span> <span class="toc-text"> ② 精确率与召回率：</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3-%E5%AF%B9%E6%95%B0%E6%8D%9F%E5%A4%B1"><span class="toc-number">2.1.3.</span> <span class="toc-text"> ③ 对数损失</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#4-%E5%9D%87%E6%96%B9%E6%A0%B9%E8%AF%AF%E5%B7%AE"><span class="toc-number">2.1.4.</span> <span class="toc-text"> ④ 均方根误差</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%E9%AB%98%E9%98%B6%E8%AF%84%E4%BC%B0%E6%8C%87%E6%A0%87"><span class="toc-number">2.2.</span> <span class="toc-text"> （2）高阶评估指标</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1-p-r%E6%9B%B2%E7%BA%BFp-%E7%B2%BE%E7%A1%AE%E7%8E%87precisionr-%E5%8F%AC%E5%9B%9E%E7%8E%87recall"><span class="toc-number">2.2.1.</span> <span class="toc-text"> ① P-R曲线：P: 精确率Precision，R: 召回率Recall。</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-roc%E6%9B%B2%E7%BA%BFthe-receiver-operating-characteristic-%E6%9B%B2%E7%BA%BF%E5%8F%97%E8%AF%95%E8%80%85%E5%B7%A5%E4%BD%9C%E7%89%B9%E5%BE%81%E6%9B%B2%E7%BA%BF"><span class="toc-number">2.2.2.</span> <span class="toc-text"> ② ROC曲线：the Receiver Operating Characteristic 曲线（受试者工作特征曲线）。</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3-%E5%B9%B3%E5%9D%87%E7%B2%BE%E5%BA%A6%E5%9D%87%E5%80%BCmapmean-average-precision"><span class="toc-number">2.2.3.</span> <span class="toc-text"> ③ 平均精度均值：mAP（mean average precision）</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3%E9%97%AE%E7%AD%94%E7%BB%8F%E5%85%B8"><span class="toc-number">2.3.</span> <span class="toc-text"> （3）问答经典</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1-%E5%9C%A8%E6%AD%A3%E8%B4%9F%E6%A0%B7%E6%9C%AC%E4%B8%8D%E5%B9%B3%E8%A1%A1%E7%9A%84%E5%9C%BA%E6%99%AF%E4%B8%8Bp-r%E5%92%8Croc%E5%93%AA%E4%B8%AA%E7%A8%B3%E5%AE%9A"><span class="toc-number">2.3.1.</span> <span class="toc-text"> ① 在正负样本不平衡的场景下，P-R和ROC哪个稳定？</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-%E5%8A%A8%E5%9B%BE%E6%98%BE%E7%A4%BA%E8%A1%A8%E7%8E%B0%E4%BC%98%E7%A7%80-%E8%A1%A8%E7%8E%B0%E4%B8%80%E8%88%AC-%E8%A1%A8%E7%8E%B0%E5%BE%88%E5%B7%AE%E7%9A%84%E4%B8%89%E7%A7%8D%E5%88%86%E7%B1%BB%E5%99%A8%E5%AF%B9%E5%BA%94%E7%9A%84pr%E6%9B%B2%E7%BA%BF%E5%92%8Croc%E6%9B%B2%E7%BA%BF"><span class="toc-number">2.3.2.</span> <span class="toc-text"> ② 动图显示表现优秀、表现一般、表现很差的三种分类器对应的PR曲线和ROC曲线。</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%9C%A8%E7%BA%BFab%E6%B5%8B%E8%AF%95"><span class="toc-number">3.</span> <span class="toc-text"> 3. 在线A&#x2F;B测试</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1ab%E6%B5%8B%E8%AF%95%E5%8E%9F%E7%90%86"><span class="toc-number">3.1.</span> <span class="toc-text"> （1）A&#x2F;B测试原理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%E9%80%89%E6%8B%A9ab%E6%B5%8B%E8%AF%95%E7%9A%84%E5%8E%9F%E5%9B%A0"><span class="toc-number">3.2.</span> <span class="toc-text"> （2）选择A&#x2F;B测试的原因</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3ab%E6%B5%8B%E8%AF%95%E6%A0%B8%E5%BF%83%E5%8E%9F%E5%88%99"><span class="toc-number">3.3.</span> <span class="toc-text"> （3）A&#x2F;B测试核心原则</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4ab%E6%B5%8B%E8%AF%95%E8%AF%84%E4%BC%B0%E6%8C%87%E6%A0%87"><span class="toc-number">3.4.</span> <span class="toc-text"> （4）A&#x2F;B测试评估指标</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E8%AF%84%E4%BC%B0%E4%BD%93%E7%B3%BB"><span class="toc-number">4.</span> <span class="toc-text"> 4. 推荐系统评估体系</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1%E4%BB%80%E4%B9%88%E6%98%AF%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E8%AF%84%E4%BC%B0%E4%BD%93%E7%B3%BB"><span class="toc-number">4.1.</span> <span class="toc-text"> （1）什么是推荐系统评估体系</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2%E5%AE%9E%E4%BE%8B%E8%AE%B2%E8%A7%A3%E6%A8%A1%E5%9E%8B%E7%AD%9B%E9%80%89%E8%BF%87%E7%A8%8B"><span class="toc-number">4.2.</span> <span class="toc-text"> （2）实例讲解模型筛选过程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3netflix-%E7%9A%84-replay-%E8%AF%84%E4%BC%B0%E6%96%B9%E6%B3%95%E5%AE%9E%E8%B7%B5"><span class="toc-number">4.3.</span> <span class="toc-text"> （3）Netflix 的 Replay 评估方法实践</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4interleaving-%E8%AF%84%E4%BC%B0%E6%96%B9%E6%B3%95"><span class="toc-number">4.4.</span> <span class="toc-text"> （4）Interleaving 评估方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5interleaving%E6%96%B9%E6%B3%95%E7%9A%84%E4%BC%98%E7%82%B9%E4%B8%8E%E7%BC%BA%E7%82%B9"><span class="toc-number">4.5.</span> <span class="toc-text"> （5）Interleaving方法的优点与缺点</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="toc-number">5.</span> <span class="toc-text"> 参考资料</span></a></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-RecSys/5.模型评估/[深度学习推荐系统-笔记12]模型评估" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      深度学习推荐系统-笔记12：模型评估
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/posts/9f710c67.html" class="article-date">
+	  <time datetime="2021-01-05T14:28:20.000Z" itemprop="datePublished">2021-01-05</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/">深度学习推荐系统</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/%E6%A8%A1%E5%9E%8B%E8%AF%84%E4%BC%B0/" rel="tag">模型评估</a>
+  </span>
+
+
+        
+	<span class="article-read hidden-xs">
+	    <i class="icon icon-eye-fill" aria-hidden="true"></i>
+	    <span id="busuanzi_container_page_pv">
+			<span id="busuanzi_value_page_pv">0</span>
+		</span>
+	</span>
+
+
+<!--         <span class="post-comment"><i class="icon icon-comment"></i> <a href="/posts/9f710c67.html#comments" class="article-comment-link">评论</a></span> -->
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数: 7.1k(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">预计: 25(分)</span>
+	
+
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h3 id="1-离线评估"><a class="markdownIt-Anchor" href="#1-离线评估"></a> 1. 离线评估</h3>
+<h4 id="1介绍"><a class="markdownIt-Anchor" href="#1介绍"></a> （1）介绍</h4>
+<p>离线评估是最常用、最基本的。顾名思义就是：我们将模型部署于线上环境之前，在离线环境下进行的评估。由于不用部署到生产环境，“离线评估”没有线上部署的工程风险，也不会浪费宝贵的线上流量资源，而且具有测试时间短，可多组并行，以及能够利用丰富的线下计算资源等诸多优点。</p>
+<h4 id="2评估方法"><a class="markdownIt-Anchor" href="#2评估方法"></a> （2）评估方法</h4>
+<h5 id="1-holdout-检验"><a class="markdownIt-Anchor" href="#1-holdout-检验"></a> ① Holdout 检验。</h5>
+<p>最基础，最常用的离线评估方法，它将原始的样本集合随机划分为<strong>训练集</strong>和<strong>测试集</strong>两部分，所以 Holdout 检验的关键词就是“随机”。</p>
+<p>缺点：评估的结果有一定随机性。且样本比较少时，训练集会进一步减小，往往会影响模型的训练效果。</p>
+<h5 id="2-交叉检验"><a class="markdownIt-Anchor" href="#2-交叉检验"></a> ② 交叉检验</h5>
+<p>将全部样本划分成 k 个大小相等的样本子集，然后依次遍历这 k 个子集，每次把当前遍历到的子集作为验证集，其余所有的子集作为训练集，这样依次进行 k 次模型的训练和评估。最后，我们再将所有 k 次评估指标的平均值作为最终的评估指标。在我们的实践中，k 经常取 10，也就是依次进行 10 次检验然后取指标均值。</p>
+<p>缺点：当样本规模比较小时，将样本集进行划分会让训练集进一步减小，这往往会影响模型的训练效果。</p>
+<h5 id="3-自助法不太常用"><a class="markdownIt-Anchor" href="#3-自助法不太常用"></a> ③ 自助法（不太常用）</h5>
+<p><strong>基于自助采样的检验方法</strong>，它的主要过程是：对于总数为 n 的样本集合，我们先进行 n 次有放回地随机抽样，得到大小为 n 的训练集。在 n 次采样过程中，有的样本会被重复采样，有的样本没有被抽出过，我们再将这些没有被抽出的样本作为验证集进行模型验证，这就是自助法的验证过程。</p>
+<p>缺点：改变了原有数据的分布，有可能让模型产生一定程度的偏差。</p>
+<h5 id="4-时间切割"><a class="markdownIt-Anchor" href="#4-时间切割"></a> ④ 时间切割</h5>
+<p>防止“信息穿越”导致的模型作弊现象发生，我们一般会使用时间切割的方案去划分训练集和测试集。比如，你一共处理了 30 天的样本，从第 25 天末开始切割，前 25 天的样本作为训练集，后 5 天的样本作为测试集，这样我们就从根源上切断了引入“未来信息”的可能。</p>
+<p>缺点：整个评估过程是静态的，模型不会随着评估的进行而更新，这显然是不符合事实的</p>
+<h5 id="5-离线replay"><a class="markdownIt-Anchor" href="#5-离线replay"></a> ⑤ 离线Replay</h5>
+<p>在离线状态下对线上更新过程进行仿真，让整个评估过程“动”起来。业界把这样离线仿真式的评估方式叫做离线 Replay。</p>
+<p>Replay 评估的过程更接近于真实的线上环境，因为它在线下还原了模型在线上的更新、预估过程。这也让 Replay 方法的评估结果更加权威可信，毕竟，我们最终的目标是让模型在线上产生更好的效果。</p>
+<h4 id="3总结"><a class="markdownIt-Anchor" href="#3总结"></a> （3）总结</h4>
+<img src="https://gitee.com/acdance/img/raw/master/blogs/image-20210117172459000.png" alt="离线评估方法比较" style="zoom:50%;" />
+<h4 id="4经典问答"><a class="markdownIt-Anchor" href="#4经典问答"></a> （4）经典问答</h4>
+<p>① 离线 Replay 和增强学习有什么相似之处吗？它们两个还有什么更深层次的关系吗？</p>
+<ul>
+<li>离线Replay和RL都是动态更新模型的，都需要不断的测试和再训练模型。增强学习(如DRN)是通过不断接受反馈，在线更新模型的，所以评估方法不能引入未来信息，</li>
+<li>简单的时间切割评估方法又不能模拟模型的更新频率，所以离线Replay是增强学习的唯一离线评估方法。</li>
+</ul>
+<h3 id="2-评估指标"><a class="markdownIt-Anchor" href="#2-评估指标"></a> 2. 评估指标</h3>
+<p>为了更明白的描述各个指标，预定义如下标识：</p>
+<pre class="mermaid">graph LR
+A[总样本:含正负样本]-->B[经过分类器计算得到概率]
+B-->|概率>=阈值| C1[判定为正]
+B-->|概率< 阈值| C2[判定为负]
+C1-->|实际正样本,预测正确| TP[TP:判定为正,分类正确]
+C1-->|实际负样本,预测错误| FP[FP:判定为正,分类错误]
+C2-->|实际负样本,预测正确| TN[TN:判定为负,分类正确]
+C2-->|实际正样本,预测错误| FN[FN:判定为负,分类错误]</pre>
+<p><img src="https://gitee.com/acdance/img/raw/master/blogs/image-20210315155746765.png" alt="预定义表示" /></p>
+<p>关于以上TP、FP、FN、TN四组表示，大家应该可以总结出规律，其中第一个字母的<strong>T和F</strong>分别表示分类结果<strong>正确和错误</strong>；第二个字母P和N分别表示判定为<strong>正和负样本</strong>。</p>
+<h4 id="1低阶评估指标"><a class="markdownIt-Anchor" href="#1低阶评估指标"></a> （1）低阶评估指标</h4>
+<p>对于低阶评估指标来说，准确率、精确率与召回率、对数损失、均方根误差，这四个指标在推荐模型评估中最常用。</p>
+<h5 id="1-准确率"><a class="markdownIt-Anchor" href="#1-准确率"></a> ① 准确率：</h5>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">准</mi><mi mathvariant="normal">确</mi><mi mathvariant="normal">率</mi><mo>=</mo><mfrac><mrow><mo stretchy="false">(</mo><mi>T</mi><mi>P</mi><mo>+</mo><mi>T</mi><mi>N</mi><msub><mo stretchy="false">)</mo><mrow><mi mathvariant="normal">分</mi><mi mathvariant="normal">类</mi><mi mathvariant="normal">结</mi><mi mathvariant="normal">果</mi><mi mathvariant="normal">正</mi><mi mathvariant="normal">确</mi><mi mathvariant="normal">的</mi><mi mathvariant="normal">样</mi><mi mathvariant="normal">本</mi><mo stretchy="false">(</mo><mi mathvariant="normal">圆</mi><mi mathvariant="normal">形</mi><mi mathvariant="normal">图</mi><mi mathvariant="normal">中</mi><mi mathvariant="normal">绿</mi><mi mathvariant="normal">色</mi><mi mathvariant="normal">对</mi><mi mathvariant="normal">角</mi><mi mathvariant="normal">块</mi><mo stretchy="false">)</mo></mrow></msub></mrow><mrow><mo stretchy="false">(</mo><mi>T</mi><mi>P</mi><mo>+</mo><mi>F</mi><mi>P</mi><mo>+</mo><mi>F</mi><mi>N</mi><mo>+</mo><mi>T</mi><mi>N</mi><msub><mo stretchy="false">)</mo><mrow><mi mathvariant="normal">总</mi><mi mathvariant="normal">样</mi><mi mathvariant="normal">本</mi></mrow></msub></mrow></mfrac><mo>∗</mo><mn>100</mn><mi mathvariant="normal">%</mi></mrow><annotation encoding="application/x-tex">准确率 = \frac{(TP + TN)_{分类结果正确的样本(圆形图中绿色对角块)}}{(TP + FP + FN + TN)_{总样本}} * 100 \%
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.36687em;vertical-align:0em;"></span><span class="mord cjk_fallback">准</span><span class="mord cjk_fallback">确</span><span class="mord cjk_fallback">率</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:2.4312em;vertical-align:-0.936em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.4951999999999999em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">F</span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">F</span><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="mclose"><span class="mclose">)</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:-0.15em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord cjk_fallback mtight">总</span><span class="mord cjk_fallback mtight">样</span><span class="mord cjk_fallback mtight">本</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.7451999999999996em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="mclose"><span class="mclose">)</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.34480000000000005em;"><span style="top:-2.5198em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord cjk_fallback mtight">分</span><span class="mord cjk_fallback mtight">类</span><span class="mord cjk_fallback mtight">结</span><span class="mord cjk_fallback mtight">果</span><span class="mord cjk_fallback mtight">正</span><span class="mord cjk_fallback mtight">确</span><span class="mord cjk_fallback mtight">的</span><span class="mord cjk_fallback mtight">样</span><span class="mord cjk_fallback mtight">本</span><span class="mopen mtight">(</span><span class="mord cjk_fallback mtight">圆</span><span class="mord cjk_fallback mtight">形</span><span class="mord cjk_fallback mtight">图</span><span class="mord cjk_fallback mtight">中</span><span class="mord cjk_fallback mtight">绿</span><span class="mord cjk_fallback mtight">色</span><span class="mord cjk_fallback mtight">对</span><span class="mord cjk_fallback mtight">角</span><span class="mord cjk_fallback mtight">块</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3551999999999999em;"><span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.936em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.80556em;vertical-align:-0.05556em;"></span><span class="mord">1</span><span class="mord">0</span><span class="mord">0</span><span class="mord">%</span></span></span></span></span></p>
+<p>缺点：当不同类别的样本比例非常不均衡的时候，占比大的类别往往成为影响准确率的最主要因素。比如，负样本占 99%，那么分类器把所有样本都预测为负样本也可以获得 99% 的准确率。</p>
+<h5 id="2-精确率与召回率"><a class="markdownIt-Anchor" href="#2-精确率与召回率"></a> ② 精确率与召回率：</h5>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">精</mi><mi mathvariant="normal">确</mi><mi mathvariant="normal">率</mi><mo>=</mo><mfrac><mrow><mi>T</mi><msub><mi>P</mi><mrow><mi mathvariant="normal">分</mi><mi mathvariant="normal">类</mi><mi mathvariant="normal">结</mi><mi mathvariant="normal">果</mi><mi mathvariant="normal">正</mi><mi mathvariant="normal">确</mi><mi mathvariant="normal">的</mi><mi mathvariant="normal">正</mi><mi mathvariant="normal">样</mi><mi mathvariant="normal">本</mi><mo stretchy="false">(</mo><mi mathvariant="normal">圆</mi><mi mathvariant="normal">形</mi><mi mathvariant="normal">图</mi><mi mathvariant="normal">中</mi><mi mathvariant="normal">左</mi><mi mathvariant="normal">上</mi><mi mathvariant="normal">角</mi><mo stretchy="false">)</mo></mrow></msub></mrow><mrow><mo stretchy="false">(</mo><mi>T</mi><mi>P</mi><mo>+</mo><mi>F</mi><mi>P</mi><msub><mo stretchy="false">)</mo><mrow><mi mathvariant="normal">分</mi><mi mathvariant="normal">类</mi><mi mathvariant="normal">为</mi><mi mathvariant="normal">正</mi><mi mathvariant="normal">的</mi><mi mathvariant="normal">样</mi><mi mathvariant="normal">本</mi><mo stretchy="false">(</mo><mi mathvariant="normal">圆</mi><mi mathvariant="normal">形</mi><mi mathvariant="normal">图</mi><mi mathvariant="normal">中</mi><mi mathvariant="normal">的</mi><mi mathvariant="normal">左</mi><mi mathvariant="normal">半</mi><mi mathvariant="normal">球</mi><mi mathvariant="normal">，</mi><mi mathvariant="normal">纵</mi><mi mathvariant="normal">轴</mi><mi mathvariant="normal">方</mi><mi mathvariant="normal">向</mi><mo stretchy="false">)</mo></mrow></msub></mrow></mfrac><mo>∗</mo><mn>100</mn><mi mathvariant="normal">%</mi></mrow><annotation encoding="application/x-tex">精确率 = \frac{TP_{分类结果正确的正样本(圆形图中左上角)}}{(TP + FP)_{分类为正的样本(圆形图中的左半球，纵轴方向)}} * 100\%
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.36687em;vertical-align:0em;"></span><span class="mord cjk_fallback">精</span><span class="mord cjk_fallback">确</span><span class="mord cjk_fallback">率</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:2.4697299999999998em;vertical-align:-1.0412em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.4285299999999999em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">F</span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mclose"><span class="mclose">)</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.34480000000000005em;"><span style="top:-2.5198em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord cjk_fallback mtight">分</span><span class="mord cjk_fallback mtight">类</span><span class="mord cjk_fallback mtight">为</span><span class="mord cjk_fallback mtight">正</span><span class="mord cjk_fallback mtight">的</span><span class="mord cjk_fallback mtight">样</span><span class="mord cjk_fallback mtight">本</span><span class="mopen mtight">(</span><span class="mord cjk_fallback mtight">圆</span><span class="mord cjk_fallback mtight">形</span><span class="mord cjk_fallback mtight">图</span><span class="mord cjk_fallback mtight">中</span><span class="mord cjk_fallback mtight">的</span><span class="mord cjk_fallback mtight">左</span><span class="mord cjk_fallback mtight">半</span><span class="mord cjk_fallback mtight">球</span><span class="mord cjk_fallback mtight">，</span><span class="mord cjk_fallback mtight">纵</span><span class="mord cjk_fallback mtight">轴</span><span class="mord cjk_fallback mtight">方</span><span class="mord cjk_fallback mtight">向</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3551999999999999em;"><span></span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.7451999999999996em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.34480000000000005em;"><span style="top:-2.5198em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord cjk_fallback mtight">分</span><span class="mord cjk_fallback mtight">类</span><span class="mord cjk_fallback mtight">结</span><span class="mord cjk_fallback mtight">果</span><span class="mord cjk_fallback mtight">正</span><span class="mord cjk_fallback mtight">确</span><span class="mord cjk_fallback mtight">的</span><span class="mord cjk_fallback mtight">正</span><span class="mord cjk_fallback mtight">样</span><span class="mord cjk_fallback mtight">本</span><span class="mopen mtight">(</span><span class="mord cjk_fallback mtight">圆</span><span class="mord cjk_fallback mtight">形</span><span class="mord cjk_fallback mtight">图</span><span class="mord cjk_fallback mtight">中</span><span class="mord cjk_fallback mtight">左</span><span class="mord cjk_fallback mtight">上</span><span class="mord cjk_fallback mtight">角</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3551999999999999em;"><span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.0412em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.80556em;vertical-align:-0.05556em;"></span><span class="mord">1</span><span class="mord">0</span><span class="mord">0</span><span class="mord">%</span></span></span></span></span></p>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">召</mi><mi mathvariant="normal">回</mi><mi mathvariant="normal">率</mi><mo>=</mo><mfrac><mrow><mi>T</mi><msub><mi>P</mi><mrow><mi mathvariant="normal">分</mi><mi mathvariant="normal">类</mi><mi mathvariant="normal">结</mi><mi mathvariant="normal">果</mi><mi mathvariant="normal">正</mi><mi mathvariant="normal">确</mi><mi mathvariant="normal">的</mi><mi mathvariant="normal">正</mi><mi mathvariant="normal">样</mi><mi mathvariant="normal">本</mi><mo stretchy="false">(</mo><mi mathvariant="normal">圆</mi><mi mathvariant="normal">形</mi><mi mathvariant="normal">图</mi><mi mathvariant="normal">中</mi><mi mathvariant="normal">左</mi><mi mathvariant="normal">上</mi><mi mathvariant="normal">角</mi><mo stretchy="false">)</mo></mrow></msub></mrow><mrow><mo stretchy="false">(</mo><mi>T</mi><mi>P</mi><mo>+</mo><mi>F</mi><mi>N</mi><msub><mo stretchy="false">)</mo><mrow><mi mathvariant="normal">真</mi><mi mathvariant="normal">实</mi><mi mathvariant="normal">的</mi><mi mathvariant="normal">正</mi><mi mathvariant="normal">样</mi><mi mathvariant="normal">本</mi><mo stretchy="false">(</mo><mi mathvariant="normal">圆</mi><mi mathvariant="normal">形</mi><mi mathvariant="normal">图</mi><mi mathvariant="normal">中</mi><mi mathvariant="normal">的</mi><mi mathvariant="normal">北</mi><mi mathvariant="normal">半</mi><mi mathvariant="normal">球</mi><mi mathvariant="normal">，</mi><mi mathvariant="normal">横</mi><mi mathvariant="normal">轴</mi><mi mathvariant="normal">方</mi><mi mathvariant="normal">向</mi><mo stretchy="false">)</mo></mrow></msub></mrow></mfrac><mo>∗</mo><mn>100</mn><mi mathvariant="normal">%</mi></mrow><annotation encoding="application/x-tex">召回率=\frac{TP_{分类结果正确的正样本(圆形图中左上角)}}{(TP + FN)_{真实的正样本(圆形图中的北半球，横轴方向)}} * 100 \%
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.36687em;vertical-align:0em;"></span><span class="mord cjk_fallback">召</span><span class="mord cjk_fallback">回</span><span class="mord cjk_fallback">率</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:2.4697299999999998em;vertical-align:-1.0412em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.4285299999999999em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">F</span><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="mclose"><span class="mclose">)</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.34480000000000005em;"><span style="top:-2.5198em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord cjk_fallback mtight">真</span><span class="mord cjk_fallback mtight">实</span><span class="mord cjk_fallback mtight">的</span><span class="mord cjk_fallback mtight">正</span><span class="mord cjk_fallback mtight">样</span><span class="mord cjk_fallback mtight">本</span><span class="mopen mtight">(</span><span class="mord cjk_fallback mtight">圆</span><span class="mord cjk_fallback mtight">形</span><span class="mord cjk_fallback mtight">图</span><span class="mord cjk_fallback mtight">中</span><span class="mord cjk_fallback mtight">的</span><span class="mord cjk_fallback mtight">北</span><span class="mord cjk_fallback mtight">半</span><span class="mord cjk_fallback mtight">球</span><span class="mord cjk_fallback mtight">，</span><span class="mord cjk_fallback mtight">横</span><span class="mord cjk_fallback mtight">轴</span><span class="mord cjk_fallback mtight">方</span><span class="mord cjk_fallback mtight">向</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3551999999999999em;"><span></span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.7451999999999996em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.34480000000000005em;"><span style="top:-2.5198em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord cjk_fallback mtight">分</span><span class="mord cjk_fallback mtight">类</span><span class="mord cjk_fallback mtight">结</span><span class="mord cjk_fallback mtight">果</span><span class="mord cjk_fallback mtight">正</span><span class="mord cjk_fallback mtight">确</span><span class="mord cjk_fallback mtight">的</span><span class="mord cjk_fallback mtight">正</span><span class="mord cjk_fallback mtight">样</span><span class="mord cjk_fallback mtight">本</span><span class="mopen mtight">(</span><span class="mord cjk_fallback mtight">圆</span><span class="mord cjk_fallback mtight">形</span><span class="mord cjk_fallback mtight">图</span><span class="mord cjk_fallback mtight">中</span><span class="mord cjk_fallback mtight">左</span><span class="mord cjk_fallback mtight">上</span><span class="mord cjk_fallback mtight">角</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3551999999999999em;"><span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.0412em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.80556em;vertical-align:-0.05556em;"></span><span class="mord">1</span><span class="mord">0</span><span class="mord">0</span><span class="mord">%</span></span></span></span></span></p>
+<ul>
+<li>
+<p>在推荐列表中，通常没有一个确定的阈值来把预测结果直接判定为正样本或负样本，而是采用 **Top N 排序结果的精确率（Precision@N）和召回率（Recall@N）**来衡量排序模型的性能。具体操作，就是认为模型排序的前 N 个结果就是模型判定的正样本，然后分别计算 Precision@N 和 Recall@N。</p>
+</li>
+<li>
+<p>精确率和召回率其实是矛盾统一的一对指标，可以使用<strong>F1-score</strong>综合地反映精确率和召回率的高低。 F1-score的定义是精确率和召回率的<strong>调和平均值</strong>。</p>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>F</mi><mn>1</mn><mo>=</mo><mfrac><mrow><mn>2</mn><mo separator="true">⋅</mo><mi>P</mi><mi>r</mi><mi>e</mi><mi>c</mi><mi>i</mi><mi>s</mi><mi>i</mi><mi>o</mi><mi>n</mi><mo separator="true">⋅</mo><mi>R</mi><mi>e</mi><mi>c</mi><mi>a</mi><mi>l</mi><mi>l</mi></mrow><mrow><mi>P</mi><mi>r</mi><mi>e</mi><mi>c</mi><mi>i</mi><mi>s</mi><mi>i</mi><mi>o</mi><mi>n</mi><mo>+</mo><mi>R</mi><mi>e</mi><mi>c</mi><mi>a</mi><mi>l</mi><mi>l</mi></mrow></mfrac></mrow><annotation encoding="application/x-tex">F1=\frac{2 · Precision · Recall}{Precision + Recall}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">F</span><span class="mord">1</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:2.14077em;vertical-align:-0.7693300000000001em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.37144em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault">e</span><span class="mord mathdefault">c</span><span class="mord mathdefault">i</span><span class="mord mathdefault">s</span><span class="mord mathdefault">i</span><span class="mord mathdefault">o</span><span class="mord mathdefault">n</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mord mathdefault">e</span><span class="mord mathdefault">c</span><span class="mord mathdefault">a</span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">2</span><span class="mpunct">⋅</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mord mathdefault" style="margin-right:0.02778em;">r</span><span class="mord mathdefault">e</span><span class="mord mathdefault">c</span><span class="mord mathdefault">i</span><span class="mord mathdefault">s</span><span class="mord mathdefault">i</span><span class="mord mathdefault">o</span><span class="mord mathdefault">n</span><span class="mpunct">⋅</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mord mathdefault">e</span><span class="mord mathdefault">c</span><span class="mord mathdefault">a</span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.7693300000000001em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span></p>
+</li>
+</ul>
+<h5 id="3-对数损失"><a class="markdownIt-Anchor" href="#3-对数损失"></a> ③ 对数损失</h5>
+<p>二分类和多分类模型的 Logloss 其实就是我们之前讲过的逻辑回归和 Softmax 模型的损失函数，而大量深度学习模型的输出层正是逻辑回归或 Softmax，因此，采用 Logloss 作为评估指标能够非常直观地反映模型损失函数的变化。所以在训练模型的过程中，我们在每一轮训练中都会输出 Logloss，来观察模型的收敛情况。</p>
+<p>二分类对数损失函数：<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>−</mo><mfrac><mn>1</mn><mi>N</mi></mfrac><msubsup><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>N</mi></msubsup><mo stretchy="false">[</mo><msub><mi>y</mi><mi>i</mi></msub><mi>l</mi><mi>o</mi><mi>g</mi><msub><mi>p</mi><mi>i</mi></msub><mo>+</mo><mo stretchy="false">(</mo><mn>1</mn><mo>−</mo><msub><mi>y</mi><mi>i</mi></msub><mo stretchy="false">)</mo><mi>l</mi><mi>o</mi><mi>g</mi><mo stretchy="false">(</mo><mn>1</mn><mo>−</mo><msub><mi>p</mi><mi>i</mi></msub><mo stretchy="false">)</mo><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">-\frac{1}{N} \sum^N_{i=1} [y_i log{p_i} + (1-y_i) log(1-p_i)]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.326231em;vertical-align:-0.345em;"></span><span class="mord">−</span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.845108em;"><span style="top:-2.6550000000000002em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.10903em;">N</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.394em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.345em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mop"><span class="mop op-symbol small-op" style="position:relative;top:-0.0000050000000000050004em;">∑</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.981231em;"><span style="top:-2.40029em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">i</span><span class="mrel mtight">=</span><span class="mord mtight">1</span></span></span></span><span style="top:-3.2029em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.10903em;">N</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.29971000000000003em;"><span></span></span></span></span></span></span><span class="mopen">[</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:-0.03588em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mord mathdefault">o</span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="mord"><span class="mord"><span class="mord mathdefault">p</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:-0.03588em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mord mathdefault">o</span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="mopen">(</span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathdefault">p</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mclose">]</span></span></span></span></p>
+<p>多分类对数损失函数：<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>−</mo><mfrac><mn>1</mn><mi>N</mi></mfrac><msubsup><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>N</mi></msubsup><msubsup><mo>∑</mo><mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow><mi>M</mi></msubsup><mo stretchy="false">[</mo><msub><mi>y</mi><mrow><mi>i</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub><mtext> </mtext><mi>l</mi><mi>o</mi><mi>g</mi><mo stretchy="false">(</mo><msub><mi>p</mi><mrow><mi>i</mi><mo separator="true">,</mo><mi>j</mi></mrow></msub><mo stretchy="false">)</mo><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">-\frac{1}{N} \sum^N_{i=1} \sum^M_{j=1} [y_{i,j} \ log(p_{i,j})]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.417049em;vertical-align:-0.43581800000000004em;"></span><span class="mord">−</span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.845108em;"><span style="top:-2.6550000000000002em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.10903em;">N</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.394em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.345em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mop"><span class="mop op-symbol small-op" style="position:relative;top:-0.0000050000000000050004em;">∑</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.981231em;"><span style="top:-2.40029em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">i</span><span class="mrel mtight">=</span><span class="mord mtight">1</span></span></span></span><span style="top:-3.2029em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.10903em;">N</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.29971000000000003em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mop"><span class="mop op-symbol small-op" style="position:relative;top:-0.0000050000000000050004em;">∑</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.981231em;"><span style="top:-2.40029em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.05724em;">j</span><span class="mrel mtight">=</span><span class="mord mtight">1</span></span></span></span><span style="top:-3.2029em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.10903em;">M</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.43581800000000004em;"><span></span></span></span></span></span></span><span class="mopen">[</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.311664em;"><span style="top:-2.5500000000000003em;margin-left:-0.03588em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">i</span><span class="mpunct mtight">,</span><span class="mord mathdefault mtight" style="margin-right:0.05724em;">j</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span><span class="mspace"> </span><span class="mord mathdefault" style="margin-right:0.01968em;">l</span><span class="mord mathdefault">o</span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault">p</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.311664em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">i</span><span class="mpunct mtight">,</span><span class="mord mathdefault mtight" style="margin-right:0.05724em;">j</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mclose">]</span></span></span></span></p>
+<h5 id="4-均方根误差"><a class="markdownIt-Anchor" href="#4-均方根误差"></a> ④ 均方根误差</h5>
+<p>准确率、精确率、召回率、LogLoss 都是针对分类模型指定的指标。除了这种分类模型外，还有回归模型。它是用来预测一个连续值，比如预测某个用户对某个电影会打多少分，这就是一个回归模型。最常用的评估指标就是<strong>均方根误差（RMSE，Root Mean Square Error）</strong>。公式如下：</p>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>R</mi><mi>M</mi><mi>S</mi><mi>E</mi><mo>=</mo><msqrt><mfrac><mrow><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>N</mi></munderover><mo stretchy="false">(</mo><msub><mi>y</mi><mi>i</mi></msub><mo>−</mo><mover accent="true"><msub><mi>y</mi><mi>i</mi></msub><mo>^</mo></mover><msup><mo stretchy="false">)</mo><mn>2</mn></msup></mrow><mi>N</mi></mfrac></msqrt></mrow><annotation encoding="application/x-tex">RMSE=\sqrt \frac{\sum^N_{i=1} (y_i - \hat{y_i})^2}{N}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mord mathdefault" style="margin-right:0.10903em;">M</span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mord mathdefault" style="margin-right:0.05764em;">E</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:3.04em;vertical-align:-0.9136544999999998em;"></span><span class="mord sqrt"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:2.1263455em;"><span class="svg-align" style="top:-5em;"><span class="pstrut" style="height:5em;"></span><span class="mord" style="padding-left:1em;"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.670941em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">N</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.6897100000000003em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mop"><span class="mop op-symbol small-op" style="position:relative;top:-0.0000050000000000050004em;">∑</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.981231em;"><span style="top:-2.40029em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">i</span><span class="mrel mtight">=</span><span class="mord mtight">1</span></span></span></span><span style="top:-3.2029em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.10903em;">N</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.29971000000000003em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:-0.03588em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mord accent"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.69444em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathdefault" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:-0.03588em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.25em;">^</span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.19444em;"><span></span></span></span></span></span><span class="mclose"><span class="mclose">)</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.740108em;"><span style="top:-2.9890000000000003em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span><span style="top:-4.0863455em;"><span class="pstrut" style="height:5em;"></span><span class="hide-tail" style="min-width:1.02em;height:3.08em;"><svg width='400em' height='3.08em' viewBox='0 0 400000 3240' preserveAspectRatio='xMinYMin slice'><path d='M473,2793c339.3,-1799.3,509.3,-2700,510,-2702
+c3.3,-7.3,9.3,-11,18,-11H400000v40H1017.7s-90.5,478,-276.2,1466c-185.7,988,
+-279.5,1483,-281.5,1485c-2,6,-10,9,-24,9c-8,0,-12,-0.7,-12,-2c0,-1.3,-5.3,-32,
+-16,-92c-50.7,-293.3,-119.7,-693.3,-207,-1200c0,-1.3,-5.3,8.7,-16,30c-10.7,
+21.3,-21.3,42.7,-32,64s-16,33,-16,33s-26,-26,-26,-26s76,-153,76,-153s77,-151,
+77,-151c0.7,0.7,35.7,202,105,604c67.3,400.7,102,602.7,104,606z
+M1001 80H400000v40H1017z'/></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.9136544999999998em;"><span></span></span></span></span></span></span></span></span></span></p>
+<p><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>y</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">y_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:-0.03588em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>是第<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>i</mi></mrow><annotation encoding="application/x-tex">i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.65952em;vertical-align:0em;"></span><span class="mord mathdefault">i</span></span></span></span>个样本点的真实值，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mover accent="true"><msub><mi>y</mi><mi>i</mi></msub><mo>^</mo></mover></mrow><annotation encoding="application/x-tex">\hat{y_i}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord accent"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.69444em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathdefault" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:-0.03588em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.25em;">^</span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.19444em;"><span></span></span></span></span></span></span></span></span>是第<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>i</mi></mrow><annotation encoding="application/x-tex">i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.65952em;vertical-align:0em;"></span><span class="mord mathdefault">i</span></span></span></span>个样本点的预测值，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">n</span></span></span></span>是样本个数。那么均方根误差越小，当然就证明这个回归模型预测越精确。</p>
+<h4 id="2高阶评估指标"><a class="markdownIt-Anchor" href="#2高阶评估指标"></a> （2）高阶评估指标</h4>
+<h5 id="1-p-r曲线p-精确率precisionr-召回率recall"><a class="markdownIt-Anchor" href="#1-p-r曲线p-精确率precisionr-召回率recall"></a> ① P-R曲线：P: 精确率Precision，R: 召回率Recall。</h5>
+<p>为了综合评价一个推荐模型的好坏，不仅要看模型在一个 Top n 值下的精确率和召回率，还要看到模型在不同 N 取值下的表现，甚至最好能绘制出一条 n 从 1 到 N，准确率和召回率变化的曲线，这条曲线就是 P-R 曲线。其中<strong>纵轴</strong>是精确率(注意看公式2的分母)，<strong>横轴</strong>是召回率(注意看公式3的分母)。</p>
+<p>AUC(Area Under Curve)，曲线下面积。计算 AUC 值只需要沿着曲线横轴做积分。AUC 越大，就证明推荐模型的综合性能越好。其中可以是P-R曲线，也可以是接下来要介绍的ROC曲线。</p>
+<h5 id="2-roc曲线the-receiver-operating-characteristic-曲线受试者工作特征曲线"><a class="markdownIt-Anchor" href="#2-roc曲线the-receiver-operating-characteristic-曲线受试者工作特征曲线"></a> ② ROC曲线：the Receiver Operating Characteristic 曲线（受试者工作特征曲线）。</h5>
+<p><strong>纵轴</strong>是真阳性率<strong>TPR</strong>（True Positive Rate）:</p>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>T</mi><mi>P</mi><mi>R</mi><mo>=</mo><mfrac><mrow><mi>T</mi><msub><mi>P</mi><mrow><mi mathvariant="normal">分</mi><mi mathvariant="normal">类</mi><mi mathvariant="normal">正</mi><mi mathvariant="normal">确</mi><mi mathvariant="normal">的</mi><mi mathvariant="normal">正</mi><mi mathvariant="normal">样</mi><mi mathvariant="normal">本</mi><mo stretchy="false">(</mo><mi mathvariant="normal">圆</mi><mi mathvariant="normal">形</mi><mi mathvariant="normal">图</mi><mi mathvariant="normal">中</mi><mi mathvariant="normal">左</mi><mi mathvariant="normal">上</mi><mi mathvariant="normal">角</mi><mo stretchy="false">)</mo></mrow></msub></mrow><mrow><mo stretchy="false">(</mo><mi>T</mi><mi>P</mi><mo>+</mo><mi>F</mi><mi>N</mi><msub><mo stretchy="false">)</mo><mrow><mi mathvariant="normal">真</mi><mi mathvariant="normal">实</mi><mi mathvariant="normal">的</mi><mi mathvariant="normal">正</mi><mi mathvariant="normal">样</mi><mi mathvariant="normal">本</mi><mo stretchy="false">(</mo><mi mathvariant="normal">圆</mi><mi mathvariant="normal">形</mi><mi mathvariant="normal">图</mi><mi mathvariant="normal">中</mi><mi mathvariant="normal">北</mi><mi mathvariant="normal">半</mi><mi mathvariant="normal">球</mi><mo stretchy="false">)</mo></mrow></msub></mrow></mfrac><mo>=</mo><msub><mi>R</mi><mrow><mi mathvariant="normal">召</mi><mi mathvariant="normal">回</mi><mi mathvariant="normal">率</mi></mrow></msub></mrow><annotation encoding="application/x-tex">TPR=\frac{TP_{分类正确的正样本(圆形图中左上角)}}{(TP + FN)_{真实的正样本(圆形图中北半球)}} = R_{召回率}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:2.4697299999999998em;vertical-align:-1.0412em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.4285299999999999em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">F</span><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="mclose"><span class="mclose">)</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.34480000000000005em;"><span style="top:-2.5198em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord cjk_fallback mtight">真</span><span class="mord cjk_fallback mtight">实</span><span class="mord cjk_fallback mtight">的</span><span class="mord cjk_fallback mtight">正</span><span class="mord cjk_fallback mtight">样</span><span class="mord cjk_fallback mtight">本</span><span class="mopen mtight">(</span><span class="mord cjk_fallback mtight">圆</span><span class="mord cjk_fallback mtight">形</span><span class="mord cjk_fallback mtight">图</span><span class="mord cjk_fallback mtight">中</span><span class="mord cjk_fallback mtight">北</span><span class="mord cjk_fallback mtight">半</span><span class="mord cjk_fallback mtight">球</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3551999999999999em;"><span></span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.7451999999999996em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.34480000000000005em;"><span style="top:-2.5198em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord cjk_fallback mtight">分</span><span class="mord cjk_fallback mtight">类</span><span class="mord cjk_fallback mtight">正</span><span class="mord cjk_fallback mtight">确</span><span class="mord cjk_fallback mtight">的</span><span class="mord cjk_fallback mtight">正</span><span class="mord cjk_fallback mtight">样</span><span class="mord cjk_fallback mtight">本</span><span class="mopen mtight">(</span><span class="mord cjk_fallback mtight">圆</span><span class="mord cjk_fallback mtight">形</span><span class="mord cjk_fallback mtight">图</span><span class="mord cjk_fallback mtight">中</span><span class="mord cjk_fallback mtight">左</span><span class="mord cjk_fallback mtight">上</span><span class="mord cjk_fallback mtight">角</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3551999999999999em;"><span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.0412em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:-0.15em;"><span style="top:-2.5500000000000003em;margin-left:-0.00773em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord cjk_fallback mtight">召</span><span class="mord cjk_fallback mtight">回</span><span class="mord cjk_fallback mtight">率</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span></p>
+<p><strong>横轴</strong>是假阳性率<strong>FPR</strong>（False Positive Rate）:</p>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>F</mi><mi>P</mi><mi>R</mi><mo>=</mo><mfrac><mrow><mi>F</mi><msub><mi>P</mi><mrow><mi mathvariant="normal">分</mi><mi mathvariant="normal">类</mi><mi mathvariant="normal">错</mi><mi mathvariant="normal">误</mi><mi mathvariant="normal">的</mi><mi mathvariant="normal">负</mi><mi mathvariant="normal">样</mi><mi mathvariant="normal">本</mi><mo stretchy="false">(</mo><mi mathvariant="normal">圆</mi><mi mathvariant="normal">形</mi><mi mathvariant="normal">图</mi><mi mathvariant="normal">中</mi><mi mathvariant="normal">左</mi><mi mathvariant="normal">下</mi><mi mathvariant="normal">角</mi><mo stretchy="false">)</mo></mrow></msub></mrow><mrow><mo stretchy="false">(</mo><mi>F</mi><mi>P</mi><mo>+</mo><mi>T</mi><mi>N</mi><msub><mo stretchy="false">)</mo><mrow><mi mathvariant="normal">真</mi><mi mathvariant="normal">实</mi><mi mathvariant="normal">的</mi><mi mathvariant="normal">负</mi><mi mathvariant="normal">样</mi><mi mathvariant="normal">本</mi><mo stretchy="false">(</mo><mi mathvariant="normal">圆</mi><mi mathvariant="normal">形</mi><mi mathvariant="normal">图</mi><mi mathvariant="normal">中</mi><mi mathvariant="normal">南</mi><mi mathvariant="normal">半</mi><mi mathvariant="normal">球</mi><mo stretchy="false">)</mo></mrow></msub></mrow></mfrac></mrow><annotation encoding="application/x-tex">FPR=\frac{FP_{分类错误的负样本(圆形图中左下角)}}{(FP+TN)_{真实的负样本(圆形图中南半球)}}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">F</span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:2.4697299999999998em;vertical-align:-1.0412em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.4285299999999999em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.13889em;">F</span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="mclose"><span class="mclose">)</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.34480000000000005em;"><span style="top:-2.5198em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord cjk_fallback mtight">真</span><span class="mord cjk_fallback mtight">实</span><span class="mord cjk_fallback mtight">的</span><span class="mord cjk_fallback mtight">负</span><span class="mord cjk_fallback mtight">样</span><span class="mord cjk_fallback mtight">本</span><span class="mopen mtight">(</span><span class="mord cjk_fallback mtight">圆</span><span class="mord cjk_fallback mtight">形</span><span class="mord cjk_fallback mtight">图</span><span class="mord cjk_fallback mtight">中</span><span class="mord cjk_fallback mtight">南</span><span class="mord cjk_fallback mtight">半</span><span class="mord cjk_fallback mtight">球</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3551999999999999em;"><span></span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.7451999999999996em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">F</span><span class="mord"><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.34480000000000005em;"><span style="top:-2.5198em;margin-left:-0.13889em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord cjk_fallback mtight">分</span><span class="mord cjk_fallback mtight">类</span><span class="mord cjk_fallback mtight">错</span><span class="mord cjk_fallback mtight">误</span><span class="mord cjk_fallback mtight">的</span><span class="mord cjk_fallback mtight">负</span><span class="mord cjk_fallback mtight">样</span><span class="mord cjk_fallback mtight">本</span><span class="mopen mtight">(</span><span class="mord cjk_fallback mtight">圆</span><span class="mord cjk_fallback mtight">形</span><span class="mord cjk_fallback mtight">图</span><span class="mord cjk_fallback mtight">中</span><span class="mord cjk_fallback mtight">左</span><span class="mord cjk_fallback mtight">下</span><span class="mord cjk_fallback mtight">角</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3551999999999999em;"><span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.0412em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span></p>
+<p>绘制过程：</p>
+<ul>
+<li>第一步，根据样本标签统计出正负样本的数量，假设正样本数量为P(圆形图中北半球)，负样本数量为N(圆形图中南半球)。</li>
+<li>第二步，把纵轴的刻度间隔设置为1/P，横轴的刻度间隔设置为1/N。</li>
+<li>第三步，再根据模型输出的预测概率对样本进行从高到低的排序。</li>
+<li>第四步，依次遍历样本。从零点开始绘制 ROC 曲线，每遇到一个正样本就沿纵轴方向绘制一个刻度间隔的曲线，每遇到一个负样本就沿横轴方向绘制一个刻度间隔的曲线，直到遍历完所有样本，曲线最终停在 (1,1) 这个点，整个 ROC 曲线就绘制完成了。</li>
+<li>第五步：在绘制完 ROC 曲线后，我们也可以像 P-R 曲线一样，计算出 ROC 曲线的 AUC，AUC 越高，推荐模型的综合性能就越好。</li>
+</ul>
+<h5 id="3-平均精度均值mapmean-average-precision"><a class="markdownIt-Anchor" href="#3-平均精度均值mapmean-average-precision"></a> ③ 平均精度均值：mAP（mean average precision）</h5>
+<p>mAP是对平均精度（AP，average precision）的再次平均。那么如何计算AP呢？假设推荐系统对某一用户测试集的排序结果如下（就是给这用户推荐了N个物品，用户实际点击的统计）：</p>
+<table>
+<thead>
+<tr>
+<th>推荐序列</th>
+<th>N=1</th>
+<th>N=2</th>
+<th>N=3</th>
+<th>N=4</th>
+<th>N=5</th>
+<th>N=6</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>真实标签</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+<p>其中1表示正样本，0表示负样本（也就是说系统给这名用户推荐了N=6个物品，他/她分别点击了第1、4、5、6共计4个物品）。则每个位置上的Precision@N分别是多少呢？结果如下：</p>
+<table>
+<thead>
+<tr>
+<th>推荐序列</th>
+<th>N=1</th>
+<th>N=2</th>
+<th>N=3</th>
+<th>N=4</th>
+<th>N=5</th>
+<th>N=6</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>真实标签</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>Precision@N</td>
+<td>1/1</td>
+<td>1/2</td>
+<td>1/3</td>
+<td>2/4</td>
+<td>3/5</td>
+<td>4/6</td>
+</tr>
+</tbody>
+</table>
+<p>计算时候，只取正样本处的 Precision 进行平均，所以<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>A</mi><mi>P</mi><mo>=</mo><mfrac><mrow><mo stretchy="false">(</mo><mn>1</mn><mi mathvariant="normal">/</mi><mn>1</mn><mo>+</mo><mn>2</mn><mi mathvariant="normal">/</mi><mn>4</mn><mo>+</mo><mn>3</mn><mi mathvariant="normal">/</mi><mn>5</mn><mo>+</mo><mn>4</mn><mi mathvariant="normal">/</mi><mn>6</mn><mo stretchy="false">)</mo></mrow><mn>4</mn></mfrac><mo>=</mo><mn>0.6917</mn></mrow><annotation encoding="application/x-tex">AP = \frac {(1/1 + 2/4 + 3/5 + 4/6)} {4} = 0.6917</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault">A</span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1.355em;vertical-align:-0.345em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.01em;"><span style="top:-2.6550000000000002em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">4</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.485em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mtight">1</span><span class="mord mtight">/</span><span class="mord mtight">1</span><span class="mbin mtight">+</span><span class="mord mtight">2</span><span class="mord mtight">/</span><span class="mord mtight">4</span><span class="mbin mtight">+</span><span class="mord mtight">3</span><span class="mord mtight">/</span><span class="mord mtight">5</span><span class="mbin mtight">+</span><span class="mord mtight">4</span><span class="mord mtight">/</span><span class="mord mtight">6</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.345em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">0</span><span class="mord">.</span><span class="mord">6</span><span class="mord">9</span><span class="mord">1</span><span class="mord">7</span></span></span></span>。</p>
+<p>mAP又是什么呢？对测试集中的每个用户都进行样本排序，那么每个用户都会计算出一个 AP 值，再对所有用户的 AP 值进行平均，就得到了 mAP。<strong>因为 mAP 需要对每个用户的样本进行分用户排序，而 P-R 曲线和 ROC 曲线均是对全量测试样本进行排序。</strong></p>
+<h4 id="3问答经典"><a class="markdownIt-Anchor" href="#3问答经典"></a> （3）问答经典</h4>
+<h5 id="1-在正负样本不平衡的场景下p-r和roc哪个稳定"><a class="markdownIt-Anchor" href="#1-在正负样本不平衡的场景下p-r和roc哪个稳定"></a> ① 在正负样本不平衡的场景下，P-R和ROC哪个稳定？</h5>
+<p>当我们将负样本复制10倍时：</p>
+<ul>
+<li>ROC曲线（<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>T</mi><mi>P</mi><mi>R</mi><mo>=</mo><mfrac><mrow><mi>T</mi><msub><mi>P</mi><mrow><mi mathvariant="normal">分</mi><mi mathvariant="normal">类</mi><mi mathvariant="normal">正</mi><mi mathvariant="normal">确</mi><mi mathvariant="normal">的</mi><mi mathvariant="normal">正</mi><mi mathvariant="normal">样</mi><mi mathvariant="normal">本</mi><mo stretchy="false">(</mo><mi mathvariant="normal">圆</mi><mi mathvariant="normal">形</mi><mi mathvariant="normal">图</mi><mi mathvariant="normal">中</mi><mi mathvariant="normal">左</mi><mi mathvariant="normal">上</mi><mi mathvariant="normal">角</mi><mo stretchy="false">)</mo></mrow></msub></mrow><mrow><mo stretchy="false">(</mo><mi>T</mi><mi>P</mi><mo>+</mo><mi>F</mi><mi>N</mi><msub><mo stretchy="false">)</mo><mrow><mi mathvariant="normal">真</mi><mi mathvariant="normal">实</mi><mi mathvariant="normal">的</mi><mi mathvariant="normal">正</mi><mi mathvariant="normal">样</mi><mi mathvariant="normal">本</mi><mo stretchy="false">(</mo><mi mathvariant="normal">圆</mi><mi mathvariant="normal">形</mi><mi mathvariant="normal">图</mi><mi mathvariant="normal">中</mi><mi mathvariant="normal">北</mi><mi mathvariant="normal">半</mi><mi mathvariant="normal">球</mi><mo stretchy="false">)</mo></mrow></msub></mrow></mfrac></mrow><annotation encoding="application/x-tex">TPR=\frac{TP_{分类正确的正样本(圆形图中左上角)}}{(TP + FN)_{真实的正样本(圆形图中北半球)}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1.650611em;vertical-align:-0.60364em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.046971em;"><span style="top:-2.6550000000000002em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mathdefault mtight" style="margin-right:0.13889em;">T</span><span class="mord mathdefault mtight" style="margin-right:0.13889em;">P</span><span class="mbin mtight">+</span><span class="mord mathdefault mtight" style="margin-right:0.13889em;">F</span><span class="mord mathdefault mtight" style="margin-right:0.10903em;">N</span><span class="mclose mtight"><span class="mclose mtight">)</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.3447999999999998em;margin-left:0em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5357142857142856em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord cjk_fallback mtight">真</span><span class="mord cjk_fallback mtight">实</span><span class="mord cjk_fallback mtight">的</span><span class="mord cjk_fallback mtight">正</span><span class="mord cjk_fallback mtight">样</span><span class="mord cjk_fallback mtight">本</span><span class="mopen mtight">(</span><span class="mord cjk_fallback mtight">圆</span><span class="mord cjk_fallback mtight">形</span><span class="mord cjk_fallback mtight">图</span><span class="mord cjk_fallback mtight">中</span><span class="mord cjk_fallback mtight">北</span><span class="mord cjk_fallback mtight">半</span><span class="mord cjk_fallback mtight">球</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3694857142857143em;"><span></span></span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.5686400000000003em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">T</span><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.3447999999999998em;margin-left:-0.13889em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5357142857142856em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord cjk_fallback mtight">分</span><span class="mord cjk_fallback mtight">类</span><span class="mord cjk_fallback mtight">正</span><span class="mord cjk_fallback mtight">确</span><span class="mord cjk_fallback mtight">的</span><span class="mord cjk_fallback mtight">正</span><span class="mord cjk_fallback mtight">样</span><span class="mord cjk_fallback mtight">本</span><span class="mopen mtight">(</span><span class="mord cjk_fallback mtight">圆</span><span class="mord cjk_fallback mtight">形</span><span class="mord cjk_fallback mtight">图</span><span class="mord cjk_fallback mtight">中</span><span class="mord cjk_fallback mtight">左</span><span class="mord cjk_fallback mtight">上</span><span class="mord cjk_fallback mtight">角</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3694857142857143em;"><span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.60364em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span>，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>F</mi><mi>P</mi><mi>R</mi><mo>=</mo><mfrac><mrow><mi>F</mi><msub><mi>P</mi><mrow><mi mathvariant="normal">分</mi><mi mathvariant="normal">类</mi><mi mathvariant="normal">错</mi><mi mathvariant="normal">误</mi><mi mathvariant="normal">的</mi><mi mathvariant="normal">负</mi><mi mathvariant="normal">样</mi><mi mathvariant="normal">本</mi><mo stretchy="false">(</mo><mi mathvariant="normal">圆</mi><mi mathvariant="normal">形</mi><mi mathvariant="normal">图</mi><mi mathvariant="normal">中</mi><mi mathvariant="normal">左</mi><mi mathvariant="normal">下</mi><mi mathvariant="normal">角</mi><mo stretchy="false">)</mo></mrow></msub></mrow><mrow><mo stretchy="false">(</mo><mi>F</mi><mi>P</mi><mo>+</mo><mi>T</mi><mi>N</mi><msub><mo stretchy="false">)</mo><mrow><mi mathvariant="normal">真</mi><mi mathvariant="normal">实</mi><mi mathvariant="normal">的</mi><mi mathvariant="normal">负</mi><mi mathvariant="normal">样</mi><mi mathvariant="normal">本</mi><mo stretchy="false">(</mo><mi mathvariant="normal">圆</mi><mi mathvariant="normal">形</mi><mi mathvariant="normal">图</mi><mi mathvariant="normal">中</mi><mi mathvariant="normal">南</mi><mi mathvariant="normal">半</mi><mi mathvariant="normal">球</mi><mo stretchy="false">)</mo></mrow></msub></mrow></mfrac></mrow><annotation encoding="application/x-tex">FPR=\frac{FP_{分类错误的负样本(圆形图中左下角)}}{(FP+TN)_{真实的负样本(圆形图中南半球)}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.13889em;">F</span><span class="mord mathdefault" style="margin-right:0.13889em;">P</span><span class="mord mathdefault" style="margin-right:0.00773em;">R</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1.650611em;vertical-align:-0.60364em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.046971em;"><span style="top:-2.6550000000000002em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mathdefault mtight" style="margin-right:0.13889em;">F</span><span class="mord mathdefault mtight" style="margin-right:0.13889em;">P</span><span class="mbin mtight">+</span><span class="mord mathdefault mtight" style="margin-right:0.13889em;">T</span><span class="mord mathdefault mtight" style="margin-right:0.10903em;">N</span><span class="mclose mtight"><span class="mclose mtight">)</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.3447999999999998em;margin-left:0em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5357142857142856em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord cjk_fallback mtight">真</span><span class="mord cjk_fallback mtight">实</span><span class="mord cjk_fallback mtight">的</span><span class="mord cjk_fallback mtight">负</span><span class="mord cjk_fallback mtight">样</span><span class="mord cjk_fallback mtight">本</span><span class="mopen mtight">(</span><span class="mord cjk_fallback mtight">圆</span><span class="mord cjk_fallback mtight">形</span><span class="mord cjk_fallback mtight">图</span><span class="mord cjk_fallback mtight">中</span><span class="mord cjk_fallback mtight">南</span><span class="mord cjk_fallback mtight">半</span><span class="mord cjk_fallback mtight">球</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3694857142857143em;"><span></span></span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.5686400000000003em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">F</span><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.3447999999999998em;margin-left:-0.13889em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5357142857142856em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord cjk_fallback mtight">分</span><span class="mord cjk_fallback mtight">类</span><span class="mord cjk_fallback mtight">错</span><span class="mord cjk_fallback mtight">误</span><span class="mord cjk_fallback mtight">的</span><span class="mord cjk_fallback mtight">负</span><span class="mord cjk_fallback mtight">样</span><span class="mord cjk_fallback mtight">本</span><span class="mopen mtight">(</span><span class="mord cjk_fallback mtight">圆</span><span class="mord cjk_fallback mtight">形</span><span class="mord cjk_fallback mtight">图</span><span class="mord cjk_fallback mtight">中</span><span class="mord cjk_fallback mtight">左</span><span class="mord cjk_fallback mtight">下</span><span class="mord cjk_fallback mtight">角</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3694857142857143em;"><span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.60364em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span>）中，TPR显然不会变，FPR是负样本中被预测为正样本的比例，这其实也是不变的，那整个ROC曲线也就没有变。</li>
+<li>PR曲线(<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">精</mi><mi mathvariant="normal">确</mi><mi mathvariant="normal">率</mi><mo>=</mo><mfrac><mrow><mi>T</mi><msub><mi>P</mi><mrow><mi mathvariant="normal">分</mi><mi mathvariant="normal">类</mi><mi mathvariant="normal">结</mi><mi mathvariant="normal">果</mi><mi mathvariant="normal">正</mi><mi mathvariant="normal">确</mi><mi mathvariant="normal">的</mi><mi mathvariant="normal">正</mi><mi mathvariant="normal">样</mi><mi mathvariant="normal">本</mi><mo stretchy="false">(</mo><mi mathvariant="normal">圆</mi><mi mathvariant="normal">形</mi><mi mathvariant="normal">图</mi><mi mathvariant="normal">中</mi><mi mathvariant="normal">左</mi><mi mathvariant="normal">上</mi><mi mathvariant="normal">角</mi><mo stretchy="false">)</mo></mrow></msub></mrow><mrow><mo stretchy="false">(</mo><mi>T</mi><mi>P</mi><mo>+</mo><mi>F</mi><mi>P</mi><msub><mo stretchy="false">)</mo><mrow><mi mathvariant="normal">分</mi><mi mathvariant="normal">类</mi><mi mathvariant="normal">为</mi><mi mathvariant="normal">正</mi><mi mathvariant="normal">的</mi><mi mathvariant="normal">样</mi><mi mathvariant="normal">本</mi><mo stretchy="false">(</mo><mi mathvariant="normal">圆</mi><mi mathvariant="normal">形</mi><mi mathvariant="normal">图</mi><mi mathvariant="normal">中</mi><mi mathvariant="normal">的</mi><mi mathvariant="normal">左</mi><mi mathvariant="normal">半</mi><mi mathvariant="normal">球</mi><mi mathvariant="normal">，</mi><mi mathvariant="normal">纵</mi><mi mathvariant="normal">轴</mi><mi mathvariant="normal">方</mi><mi mathvariant="normal">向</mi><mo stretchy="false">)</mo></mrow></msub></mrow></mfrac></mrow><annotation encoding="application/x-tex">精确率 = \frac{TP_{分类结果正确的正样本(圆形图中左上角)}}{(TP + FP)_{分类为正的样本(圆形图中的左半球，纵轴方向)}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.36687em;vertical-align:0em;"></span><span class="mord cjk_fallback">精</span><span class="mord cjk_fallback">确</span><span class="mord cjk_fallback">率</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1.650611em;vertical-align:-0.60364em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.046971em;"><span style="top:-2.6550000000000002em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mathdefault mtight" style="margin-right:0.13889em;">T</span><span class="mord mathdefault mtight" style="margin-right:0.13889em;">P</span><span class="mbin mtight">+</span><span class="mord mathdefault mtight" style="margin-right:0.13889em;">F</span><span class="mord mathdefault mtight" style="margin-right:0.13889em;">P</span><span class="mclose mtight"><span class="mclose mtight">)</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.3447999999999998em;margin-left:0em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5357142857142856em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord cjk_fallback mtight">分</span><span class="mord cjk_fallback mtight">类</span><span class="mord cjk_fallback mtight">为</span><span class="mord cjk_fallback mtight">正</span><span class="mord cjk_fallback mtight">的</span><span class="mord cjk_fallback mtight">样</span><span class="mord cjk_fallback mtight">本</span><span class="mopen mtight">(</span><span class="mord cjk_fallback mtight">圆</span><span class="mord cjk_fallback mtight">形</span><span class="mord cjk_fallback mtight">图</span><span class="mord cjk_fallback mtight">中</span><span class="mord cjk_fallback mtight">的</span><span class="mord cjk_fallback mtight">左</span><span class="mord cjk_fallback mtight">半</span><span class="mord cjk_fallback mtight">球</span><span class="mord cjk_fallback mtight">，</span><span class="mord cjk_fallback mtight">纵</span><span class="mord cjk_fallback mtight">轴</span><span class="mord cjk_fallback mtight">方</span><span class="mord cjk_fallback mtight">向</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3694857142857143em;"><span></span></span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.5686400000000003em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">T</span><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.3447999999999998em;margin-left:-0.13889em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5357142857142856em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord cjk_fallback mtight">分</span><span class="mord cjk_fallback mtight">类</span><span class="mord cjk_fallback mtight">结</span><span class="mord cjk_fallback mtight">果</span><span class="mord cjk_fallback mtight">正</span><span class="mord cjk_fallback mtight">确</span><span class="mord cjk_fallback mtight">的</span><span class="mord cjk_fallback mtight">正</span><span class="mord cjk_fallback mtight">样</span><span class="mord cjk_fallback mtight">本</span><span class="mopen mtight">(</span><span class="mord cjk_fallback mtight">圆</span><span class="mord cjk_fallback mtight">形</span><span class="mord cjk_fallback mtight">图</span><span class="mord cjk_fallback mtight">中</span><span class="mord cjk_fallback mtight">左</span><span class="mord cjk_fallback mtight">上</span><span class="mord cjk_fallback mtight">角</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3694857142857143em;"><span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.60364em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span>，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">召</mi><mi mathvariant="normal">回</mi><mi mathvariant="normal">率</mi><mo>=</mo><mfrac><mrow><mi>T</mi><msub><mi>P</mi><mrow><mi mathvariant="normal">分</mi><mi mathvariant="normal">类</mi><mi mathvariant="normal">结</mi><mi mathvariant="normal">果</mi><mi mathvariant="normal">正</mi><mi mathvariant="normal">确</mi><mi mathvariant="normal">的</mi><mi mathvariant="normal">正</mi><mi mathvariant="normal">样</mi><mi mathvariant="normal">本</mi><mo stretchy="false">(</mo><mi mathvariant="normal">圆</mi><mi mathvariant="normal">形</mi><mi mathvariant="normal">图</mi><mi mathvariant="normal">中</mi><mi mathvariant="normal">左</mi><mi mathvariant="normal">上</mi><mi mathvariant="normal">角</mi><mo stretchy="false">)</mo></mrow></msub></mrow><mrow><mo stretchy="false">(</mo><mi>T</mi><mi>P</mi><mo>+</mo><mi>F</mi><mi>N</mi><msub><mo stretchy="false">)</mo><mrow><mi mathvariant="normal">真</mi><mi mathvariant="normal">实</mi><mi mathvariant="normal">的</mi><mi mathvariant="normal">正</mi><mi mathvariant="normal">样</mi><mi mathvariant="normal">本</mi><mo stretchy="false">(</mo><mi mathvariant="normal">圆</mi><mi mathvariant="normal">形</mi><mi mathvariant="normal">图</mi><mi mathvariant="normal">中</mi><mi mathvariant="normal">的</mi><mi mathvariant="normal">北</mi><mi mathvariant="normal">半</mi><mi mathvariant="normal">球</mi><mi mathvariant="normal">，</mi><mi mathvariant="normal">横</mi><mi mathvariant="normal">轴</mi><mi mathvariant="normal">方</mi><mi mathvariant="normal">向</mi><mo stretchy="false">)</mo></mrow></msub></mrow></mfrac></mrow><annotation encoding="application/x-tex">召回率=\frac{TP_{分类结果正确的正样本(圆形图中左上角)}}{(TP + FN)_{真实的正样本(圆形图中的北半球，横轴方向)}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.36687em;vertical-align:0em;"></span><span class="mord cjk_fallback">召</span><span class="mord cjk_fallback">回</span><span class="mord cjk_fallback">率</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1.650611em;vertical-align:-0.60364em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.046971em;"><span style="top:-2.6550000000000002em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mathdefault mtight" style="margin-right:0.13889em;">T</span><span class="mord mathdefault mtight" style="margin-right:0.13889em;">P</span><span class="mbin mtight">+</span><span class="mord mathdefault mtight" style="margin-right:0.13889em;">F</span><span class="mord mathdefault mtight" style="margin-right:0.10903em;">N</span><span class="mclose mtight"><span class="mclose mtight">)</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.3447999999999998em;margin-left:0em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5357142857142856em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord cjk_fallback mtight">真</span><span class="mord cjk_fallback mtight">实</span><span class="mord cjk_fallback mtight">的</span><span class="mord cjk_fallback mtight">正</span><span class="mord cjk_fallback mtight">样</span><span class="mord cjk_fallback mtight">本</span><span class="mopen mtight">(</span><span class="mord cjk_fallback mtight">圆</span><span class="mord cjk_fallback mtight">形</span><span class="mord cjk_fallback mtight">图</span><span class="mord cjk_fallback mtight">中</span><span class="mord cjk_fallback mtight">的</span><span class="mord cjk_fallback mtight">北</span><span class="mord cjk_fallback mtight">半</span><span class="mord cjk_fallback mtight">球</span><span class="mord cjk_fallback mtight">，</span><span class="mord cjk_fallback mtight">横</span><span class="mord cjk_fallback mtight">轴</span><span class="mord cjk_fallback mtight">方</span><span class="mord cjk_fallback mtight">向</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3694857142857143em;"><span></span></span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.5686400000000003em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">T</span><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.3447999999999998em;margin-left:-0.13889em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5357142857142856em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord cjk_fallback mtight">分</span><span class="mord cjk_fallback mtight">类</span><span class="mord cjk_fallback mtight">结</span><span class="mord cjk_fallback mtight">果</span><span class="mord cjk_fallback mtight">正</span><span class="mord cjk_fallback mtight">确</span><span class="mord cjk_fallback mtight">的</span><span class="mord cjk_fallback mtight">正</span><span class="mord cjk_fallback mtight">样</span><span class="mord cjk_fallback mtight">本</span><span class="mopen mtight">(</span><span class="mord cjk_fallback mtight">圆</span><span class="mord cjk_fallback mtight">形</span><span class="mord cjk_fallback mtight">图</span><span class="mord cjk_fallback mtight">中</span><span class="mord cjk_fallback mtight">左</span><span class="mord cjk_fallback mtight">上</span><span class="mord cjk_fallback mtight">角</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3694857142857143em;"><span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.60364em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span>），TP不变，FP增大，而召回率R没有变，显然ROC曲线更稳定一些。</li>
+</ul>
+<h5 id="2-动图显示表现优秀-表现一般-表现很差的三种分类器对应的pr曲线和roc曲线"><a class="markdownIt-Anchor" href="#2-动图显示表现优秀-表现一般-表现很差的三种分类器对应的pr曲线和roc曲线"></a> ② 动图显示表现优秀、表现一般、表现很差的三种分类器对应的PR曲线和ROC曲线。</h5>
+<p>以下动图参考自：《<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/92218196">P-R曲线和ROC曲线理解</a>》，正样本对应下图中的红色曲线(病人分布)，负样本对应下图中的蓝色曲线(健康人群分布)</p>
+<ul>
+<li>
+<p>表现优秀的分类器，其中正负样本分布基本不重合，因此分类器可以很好地判定，此时PR和ROC曲线下的面积都很大。</p>
+<p><img src="https://gitee.com/acdance/img/raw/master/blogs/recsys12-good.gif" alt="表现优秀的分类器" /></p>
+</li>
+<li>
+<p>表现很差的分类器，其中正负样本分布全部重合，因此分类器无法正确判定，此时PR和ROC曲线下面积都很小。</p>
+<p><img src="https://gitee.com/acdance/img/raw/master/blogs/recsys12-bad.gif" alt="表现很差的分类器" /></p>
+</li>
+<li>
+<p>表现一般的分类器，其中正负样本重合一小部分，因此分类器在非重合场景下能够正确判定，重合场景下错误率较高。</p>
+<p><img src="https://gitee.com/acdance/img/raw/master/blogs/recsys12-common.gif" alt="表现一般的分类器" /></p>
+</li>
+</ul>
+<h3 id="3-在线ab测试"><a class="markdownIt-Anchor" href="#3-在线ab测试"></a> 3. 在线A/B测试</h3>
+<h4 id="1ab测试原理"><a class="markdownIt-Anchor" href="#1ab测试原理"></a> （1）A/B测试原理</h4>
+<p>A/B 测试又被称为“分流测试”或“分桶测试”，它通过把被测对象随机分成 A、B 两组，分别对它们进行对照测试的方法得出实验结论。具体到推荐模型测试的场景下，它的流程是这样的：</p>
+<p>先将用户随机分成实验组和对照组，然后给实验组的用户施以新模型，给对照组的用户施以旧模型，再经过一定时间的测试后，计算出实验组和对照组各项线上评估指标，来比较新旧模型的效果差异，最后挑选出效果更好的推荐模型。</p>
+<h4 id="2选择ab测试的原因"><a class="markdownIt-Anchor" href="#2选择ab测试的原因"></a> （2）选择A/B测试的原因</h4>
+<p>① <strong>离线评估无法完全还原线上的工程环境</strong>。一般来讲，离线评估往往不考虑线上环境的延迟、数据丢失、标签数据缺失等情况，或者说很难还原线上环境的这些细节。因此，离线评估环境只能说是理想状态下的工程环境，得出的评估结果存在一定的失真现象。</p>
+<p>② <strong>线上系统的某些商业指标在离线评估中无法计算</strong>。 离线评估一般是针对模型本身进行评估的，无法直接获得与模型相关的其他指标，特别是商业指标。像我们上节课讲的，离线评估关注的往往是ROC曲线、PR曲线的改进，而线上评估却可以全面了解推荐模型带来的用户点击率、留存时长、PV访问量这些指标的变化。</p>
+<p>③ <strong>离线评估无法完全消除数据有偏（Data Bias）现象的影响</strong>。 什么叫“数据有偏”呢？因为离线数据都是系统利用当前算法生成的数据，因此这些数据本身就不是完全客观中立的，它是用户在当前模型下的反馈。所以说，用户本身有可能已经被当前的模型“带跑偏了”，你再用这些有偏的数据来衡量你的新模型，得到的结果就可能不客观。</p>
+<h4 id="3ab测试核心原则"><a class="markdownIt-Anchor" href="#3ab测试核心原则"></a> （3）A/B测试核心原则</h4>
+<p>① 怎样才能对用户进行一个公平公正的分桶呢？如果有多组实验在同时做 A/B 测试，怎样做才能让它们互不干扰？</p>
+<ul>
+<li>分桶：我们需要注意的是<strong>样本的独立性和分桶过程的无偏性</strong>。这里的“独立性”指的是同一个用户在测试的全程只能被分到同一个桶中。“无偏性”指的是在分桶过程中用户被分到哪个实验桶中应该是一个纯随机的过程。</li>
+<li>分层：<strong>层与层之间的流量“正交”，同层之间的流量“互斥”</strong>。</li>
+</ul>
+<p>② 层与层之间的流量“正交”：**层与层之间的独立实验的流量是正交的，一批实验用的流量穿越每层实验时，都会再次随机打散，然后再用于下一层的实验。**看下示意图：</p>
+<img src="https://gitee.com/acdance/img/raw/master/blogs/e0da06ee473e3f551ac2cyy987957d7b.jpeg" style="zoom:33%;" />
+<p>假设，在一个 X 层的实验中，流量被随机平均分为 X1（蓝色）和 X2（白色）两部分。当它们穿越到 Y 层的实验之后，X1 和 X2 的流量会被随机且均匀地分配给 Y 层的两个桶 Y1 和 Y2。</p>
+<p>如果 Y1 和 Y2 的 X 层流量分配不均匀，那么 Y 层的样本就是有偏的，Y 层的实验结果就会被 X 层的实验影响，也就无法客观地反映 Y 层实验组和对照组变量的影响。</p>
+<p>③ 同层之间的流量“互斥”：</p>
+<ul>
+<li>如果同层之间进行多组 A/B 测试，不同测试之间的流量不可以重叠，这是第一个“互斥”；</li>
+<li>一组 A/B 测试中实验组和对照组的流量是不重叠的，这是第二个“互斥”。</li>
+</ul>
+<p>不同测试之间以及A/B测试的实验组和对照组之间的用户是不重叠的。特别是对推荐系统来说，用户体验的一致性是非常重要的。也就是说我们不可以让同一个用户在不同的实验组之间来回“跳跃”，这样会严重损害用户的实际体验，也会让不同组的实验结果相互影响。因此在 A/B 测试中，保证同一用户始终分配到同一个组是非常有必要的。</p>
+<h4 id="4ab测试评估指标"><a class="markdownIt-Anchor" href="#4ab测试评估指标"></a> （4）A/B测试评估指标</h4>
+<p><strong>A/B 测试的指标应该与线上业务的核心指标保持一致。</strong></p>
+<img src="https://gitee.com/acdance/img/raw/master/blogs/image-20210117191553437.png" style="zoom:50%;" />
+<h3 id="4-推荐系统评估体系"><a class="markdownIt-Anchor" href="#4-推荐系统评估体系"></a> 4. 推荐系统评估体系</h3>
+<h4 id="1什么是推荐系统评估体系"><a class="markdownIt-Anchor" href="#1什么是推荐系统评估体系"></a> （1）什么是推荐系统评估体系</h4>
+<p>由多种不同的评估方式组成的、兼顾效率和正确性的，一套用于评估推荐系统的解决方案。典型评估体系示意图如下：</p>
+<img src="https://gitee.com/acdance/img/raw/master/blogs/image-20210117192433919.png" style="zoom:50%;" />
+<p>处于最底层的是传统的离线评估方法，比如 Holdout 检验、交叉检验等，往上是离线 Replay 评估方法，再往上是一种叫 Interleaving 的线上测试方法，最后是线上 A/B 测试。</p>
+<p>越是底层的方法就会承担越多筛选掉改进思路的任务，这时候“评估效率”就成了更关键的考虑因素；</p>
+<p>随着候选模型被一层层筛选出来，越接近正式上线的阶段，评估方法对评估“正确性”的要求就越严格。</p>
+<h4 id="2实例讲解模型筛选过程"><a class="markdownIt-Anchor" href="#2实例讲解模型筛选过程"></a> （2）实例讲解模型筛选过程</h4>
+<p>假设，现在有 30 个待筛选的模型，如果所有模型都直接进入线上 A/B 测试的阶段进行测试，所需的测试样本是海量的，由于线上流量有限，测试的时间会非常长。但如果我们把测试分成两个阶段，第一个阶段先进行初筛，把 30 个模型筛选出可能胜出的 5 个，再只对这 5 个模型做线上 A/B 测试，所需的测试流量规模和测试时间长度都会大大减少。这里的初筛方法，就是我们在评估体系中提到的<strong>离线评估</strong>、<strong>离线 Replay</strong> 和<strong>在线 Interleaving</strong> 等方法。</p>
+<img src="https://gitee.com/acdance/img/raw/master/blogs/da57fcb9287b31ec436a4dce87f11c1b.jpg" style="zoom:50%;" />
+<h4 id="3netflix-的-replay-评估方法实践"><a class="markdownIt-Anchor" href="#3netflix-的-replay-评估方法实践"></a> （3）Netflix 的 Replay 评估方法实践</h4>
+<p>Netflix 为了进行离线 Replay 的实验，建立了一整套从<strong>数据生成</strong>到<strong>数据处理</strong>再到<strong>数据存储</strong>的数据处理架构，并给它起了一个很漂亮的名字，叫做时光机（Time Machine）。</p>
+<img src="https://gitee.com/acdance/img/raw/master/blogs/3e41699be3fa13709c7e898c4f07bf64.jpg" style="zoom:50%;" />
+<p>上图是时光机的架构，图中最主要的就是 <strong>Snapshot Jobs（数据快照）<strong>模块。它是一个每天执行的 Spark 程序，它做的主要任务就是</strong>把当天的各类日志、特征、数据整合起来</strong>，形成当天的、供模型训练和评估使用的样本数据。它还会以日期为目录名称，将样本快照数据保存在分布式文件系统 S3 中（Snapshots），再对外统一提供 API（Batch APIs），供其他模型在训练和评估的时候按照时间范围方便地获取。</p>
+<p>Snapshot Jobs 主任务的源数据是它上方的 <strong>Context Set 模块</strong>和左边的 <strong>Prana 模块</strong>。</p>
+<p><strong>Context Set 模块</strong>负责保存<strong>所有的历史当天的环境信息</strong>。 环境信息主要包括两类：一类是存储在 Hive 中的场景信息，比如用户的资料、设备信息、物品信息等数据；另一类是每天都会发生改变的一些统计类信息，包括物品的曝光量、点击量、播放时长等信息。</p>
+<p><strong>Prana 模块</strong>负责处理<strong>每天的系统日志流</strong>。 系统日志流指的是系统实时产生的日志，它包括用户的观看历史（Viewing History）、用户的推荐列表（My List）和用户的评价（Ratings）等。这些日志从各自的服务（Service）中产生，由 Netflix 的统一数据接口 Prana 对外提供服务。</p>
+<p>Snapshot Jobs 这个核心模块每天的任务就是，通过 Context Set 获取场景信息，通过 Prana 获取日志信息，再经过整合处理、生成特征之后，保存当天的数据快照到 S3。</p>
+<p>在生成每天的数据快照后，使用 Replay 方法进行离线评估就不再是一件困难的事情了，因为我们没有必要在 Replay 过程中进行烦琐的特征计算，直接使用当天的数据快照就可以了。</p>
+<h4 id="4interleaving-评估方法"><a class="markdownIt-Anchor" href="#4interleaving-评估方法"></a> （4）Interleaving 评估方法</h4>
+<p>① <strong>意义</strong>：首先，它是和 A/B 测试一样的在线评估方法，能够得到在线评估指标；其次，它提出的目的是为了比传统的 A/B 测试用更少的资源，更快的速度得到在线评估的结果。</p>
+<p>② <strong>传统A/B过程</strong>：把用户随机分成两组。一组接受当前的推荐模型 A 的推荐结果，这一组被称为对照组 。另一组接受新的推荐模型 B 的推荐结果，这组被成为实验组。</p>
+<p>③ <strong>Interleaving过程</strong>：<strong>只需要一组用户</strong>，这些用户会收到模型 A 和模型 B 的混合结果。也就是说，用户会在一个推荐列表里同时看到模型 A 和模型 B 的推荐结果。在评估的过程中，Interleaving 方法通过分别累加模型 A 和模型 B 推荐物品的效果，来得到模型 A 和 B 最终的评估结果。</p>
+<p>④ <strong>两者形象化的比较：</strong></p>
+<img src="https://gitee.com/acdance/img/raw/master/blogs/e2257304c4e450138f81ea9460ddef29.jpg"  style="zoom:50%;" />
+<p>⑤ 以相等的概率让模型 A 和模型 B 产生的物品交替领先。这就像在野球场打球的时候，两个队长会先通过扔硬币的方式决定谁先选人，再交替来选择队员。</p>
+<p>⑥ 最后，我们要清楚推荐列表中的物品到底是由模型 A 生成的，还是由模型 B 生成的，然后统计出所有模型 A 物品的综合效果，以及模型 B 物品的综合效果，然后进行对比。这样，模型评估过程就完成了。</p>
+<p>⑦ 在测试一些用户级别而不是模型级别的在线指标时，我们就不能用 Interleaving 方法。比如用户的留存率，用户从试用到付费的转化率等，由于 Interleaving 方法同时使用了对照模型和实验模型的结果，我们就不清楚到底是哪个模型对这些结果产生了贡献。但是在测试 CTR、播放量、播放时长这些指标时，Interleaving 就可以通过累加物品效果得到它们。这个时候，它就能很好地替代传统的 A/B 测试了。</p>
+<h4 id="5interleaving方法的优点与缺点"><a class="markdownIt-Anchor" href="#5interleaving方法的优点与缺点"></a> （5）Interleaving方法的优点与缺点</h4>
+<p>优点：</p>
+<p>① Interleaving方法的<strong>灵敏度高</strong>于A/B测试。Netflix的实验表明，Interleaving方法利用<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>1</mn><msup><mn>0</mn><mn>3</mn></msup></mrow><annotation encoding="application/x-tex">10^3</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141079999999999em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord"><span class="mord">0</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">3</span></span></span></span></span></span></span></span></span></span></span>个样本就能判定算法A是否好于算法B，但是A/B测试则需要<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>1</mn><msup><mn>0</mn><mn>5</mn></msup></mrow><annotation encoding="application/x-tex">10^5</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141079999999999em;vertical-align:0em;"></span><span class="mord">1</span><span class="mord"><span class="mord">0</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">5</span></span></span></span></span></span></span></span></span></span></span>个样本。</p>
+<p>② Netflix的实验同时表明Interleaving方法的指标与A/B测试指标之间的<strong>相关性是非常强的</strong>，也就意味着在Interleaving方法中胜出的算法也极有可能在A/B测试中胜出。</p>
+<p>缺点：</p>
+<p>① Interleaving的<strong>工程实现框架比A/B测试复杂</strong>，因为Interleaving方法的实验逻辑和业务逻辑耦合在一起，还需要将大量辅助性数据标识添加到整个数据流中。</p>
+<p>② Interleaving方法只是对“用户对算法推荐结果偏好程度”的相对测量，<strong>不能得出一个算法真实的表现</strong>。比如要想知道算法A能够将用户整体的观看时长提高多少？留存率提高多少？这些都是无法用Interleaving方法得到的。<strong>因此通常用的方法就是Interleaving+A/B测试两阶段实验结构</strong>。</p>
+<h3 id="参考资料"><a class="markdownIt-Anchor" href="#参考资料"></a> 参考资料</h3>
+<p>《深度学习推荐系统实战》 – 极客时间，王喆</p>
+<p>《<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/92218196">P-R曲线和ROC曲线理解</a>》  – 知乎</p>
+<blockquote>
+<p>本文首发于个人小站：<a target="_blank" rel="noopener" href="https://notlate.net/posts/9f710c67.html">NotLate.net</a>，欢迎关注。</p>
+</blockquote>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="https://www.notlate.net/posts/9f710c67.html" title="深度学习推荐系统-笔记12：模型评估" target="_blank" rel="external">https://www.notlate.net/posts/9f710c67.html</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<!-- <div class="panel panel-default panel-badger"> -->
+<!--   <div class="panel-body"> -->
+<!--     <figure class="media"> -->
+<!--       <div class="media-left"> -->
+<!--         <a href="" target="_blank" class="img-burn thumb-sm visible-lg"> -->
+<!--           <img src="/images/logo.png" class="img-rounded w-full" alt=""> -->
+<!--         </a> -->
+<!--       </div> -->
+<!--       <div class="media-body"> -->
+<!--         <h3 class="media-heading"><a href="" target="_blank"><span class="text-dark">ACDance</span><small class="ml-1x">一无所知，或是没被理解；&lt;br/&gt;一事无成，或是没被重视。</small></a></h3> -->
+<!--         <div></div> -->
+<!--       </div> -->
+<!--     </figure> -->
+<!--   </div> -->
+<!-- </div> -->
+
+
+    </div>
+  </article>
+  
+  <div>
+    <script src='https://unpkg.com/mermaid@8.8.0/dist/mermaid.min.js'></script>
+    <script>
+      if (window.mermaid) {
+        mermaid.initialize({startOnLoad:true});
+      }
+    </script>
+  </div>
+  
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/posts/2c4e9dc8.html" title="深度学习推荐系统-笔记13：探究业界主流的推荐系统解决方案"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/posts/e1a19c9f.html" title="深度学习推荐系统-笔记11：推荐模型融会贯通"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+        <span>[&nbsp;</span><span>文章目录</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>赏</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>感谢您的支持，我会继续努力的!</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/alipayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开支付宝扫一扫，即可进行扫码打赏哦</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechatpayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开微信扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> 支付宝</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> 微信支付</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/NotLateYet" target="_blank" title="Github" ><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" ><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        &copy; 2021 ACDance
+        
+<!--         <div class="publishby"> -->
+<!--         	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>. -->
+<!--         </div> -->
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: true,
+    notify: false,
+    appId: 'rjHvwlAnqIFCN31UINTnwMEL-gzGzoHsz',
+    appKey: '2Q9D5J3pYGojfU6ppehPEnB3',
+    placeholder: '欢迎提出意见和建议',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: false
+  });
+  </script>
+
+     
+
+
+
+  <script src="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.3.5/dist/jquery.fancybox.min.js"></script>
+  <script>
+  //利用 FancyBox 实现点击图片放大
+  $(document).ready(function() {
+    $('article img').not('[hidden]').not('.panel-body img').each(function() {
+      var $image = $(this);
+      var imageCaption = $image.attr('alt');
+      var $imageWrapLink = $image.parent('a');
+      if ($imageWrapLink.length < 1) {
+        var src = this.getAttribute('src');
+        var idx = src.lastIndexOf('?');
+        if (idx != -1) {
+          src = src.substring(0, idx);
+        }
+        $imageWrapLink = $image.wrap('<a href="' + src + '"></a>').parent('a');
+      }
+      $imageWrapLink.attr('data-fancybox', 'images');
+      if (imageCaption) {
+        $imageWrapLink.attr('data-caption', imageCaption);
+      }
+    });
+    $().fancybox({
+      selector: '[data-fancybox="images"]',
+      hash: false,
+      loop: false,
+    });
+  });
+  </script>
+
+
+
+
+    <script defer>
+var _hmt = _hmt || [];
+(function() {
+    var hm = document.createElement("script");
+    hm.src = "//hm.baidu.com/hm.js?8efc12c51b549f06ae0c6a3c0d0f2e56";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>

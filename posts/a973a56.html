@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  <meta name="google-site-verification" content="z98GT4PZdRgrcES2hf9DTxMShekuK_k-48TNAutBYZg" />
+  
+  
+    <meta name="msvalidate.01" content="8C31B0044947BFFD6869DD1B5E5E8268" />
+  
+  
+  <meta name="baidu-site-verification" content="code-fDSTdt2hx7" />
+  
+  
+  <title>计算广告-笔记04：合约广告 | Not late</title>
+  <meta name="description" content="广告位合约  最早产生的在线广告售卖方式   形式：指媒体和广告主约定在某一时间段内在某些广告位上固定投送广告主的广告   结算方式：CPT   广告排期系统  DFP(DoubleClick) 好耶Allyes 百度广告管家     优点：品牌冲击、橱窗效应、可提供附加服务(竞品排他)  缺点：受众定向之前，无法做到按照受众投放，难以深入优化效果  发展：随着受众定向技术发展，广告位合约也可">
+<meta property="og:type" content="article">
+<meta property="og:title" content="计算广告-笔记04：合约广告">
+<meta property="og:url" content="https://www.notlate.net/posts/a973a56.html">
+<meta property="og:site_name" content="Not late yet">
+<meta property="og:description" content="广告位合约  最早产生的在线广告售卖方式   形式：指媒体和广告主约定在某一时间段内在某些广告位上固定投送广告主的广告   结算方式：CPT   广告排期系统  DFP(DoubleClick) 好耶Allyes 百度广告管家     优点：品牌冲击、橱窗效应、可提供附加服务(竞品排他)  缺点：受众定向之前，无法做到按照受众投放，难以深入优化效果  发展：随着受众定向技术发展，广告位合约也可">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-10-01T04:00:10.000Z">
+<meta property="article:modified_time" content="2021-03-18T15:04:38.462Z">
+<meta property="article:author" content="ACDance">
+<meta property="article:tag" content="合约广告">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://www.notlate.net/posts/a973a56.html">
+  
+    <link rel="alternate" href="/atom.xml" title="Not late yet" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+    <link href="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.3.5/dist/jquery.fancybox.min.css" rel="stylesheet">
+  
+  
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+<body class="main-center theme-blue" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="" target="_blank">
+          <img class="img-circle img-rotate" src="/images/logo.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">ACDance</h2>
+<!--         <h3 id="title" class="hidden-xs hidden-sm hidden-md">一无所知，或是没被理解；&lt;br/&gt;一事无成，或是没被重视。</h3> -->
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">
+            一无所知，或是没被理解；<br/>一事无成，或是没被重视。
+        </h3>
+<!--         <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> </small> -->
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="检索..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/NotLateYet" target="_blank" title="Github" ><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" ><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/">人工智能</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F/">分布式</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/">深度学习推荐系统</a><span class="category-list-count">13</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%A1%E7%AE%97%E5%B9%BF%E5%91%8A/">计算广告</a><span class="category-list-count">16</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/">论文笔记</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/ADX/" style="font-size: 13px;">ADX</a> <a href="/tags/DSP/" style="font-size: 13px;">DSP</a> <a href="/tags/Embedding/" style="font-size: 13px;">Embedding</a> <a href="/tags/GNN/" style="font-size: 13px;">GNN</a> <a href="/tags/MMoE/" style="font-size: 13px;">MMoE</a> <a href="/tags/SSP/" style="font-size: 13px;">SSP</a> <a href="/tags/mongodb/" style="font-size: 13.5px;">mongodb</a> <a href="/tags/redis/" style="font-size: 13.5px;">redis</a> <a href="/tags/%E4%B8%9A%E7%95%8C%E4%B8%BB%E6%B5%81/" style="font-size: 13px;">业界主流</a> <a href="/tags/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" style="font-size: 13.25px;">人工智能</a> <a href="/tags/%E4%BC%A0%E7%BB%9F%E7%AE%97%E6%B3%95/" style="font-size: 13px;">传统算法</a> <a href="/tags/%E4%BF%A1%E6%81%AF%E6%B5%81/" style="font-size: 13px;">信息流</a> <a href="/tags/%E5%8D%8F%E5%90%8C%E8%BF%87%E6%BB%A4/" style="font-size: 13px;">协同过滤</a> <a href="/tags/%E5%8E%9F%E7%94%9F%E5%B9%BF%E5%91%8A/" style="font-size: 13px;">原生广告</a> <a href="/tags/%E5%8F%91%E5%B1%95%E8%B6%8B%E5%8A%BF/" style="font-size: 13.25px;">发展趋势</a> <a href="/tags/%E5%8F%97%E4%BC%97%E5%AE%9A%E5%90%91/" style="font-size: 13px;">受众定向</a> <a href="/tags/%E5%90%88%E7%BA%A6%E5%B9%BF%E5%91%8A/" style="font-size: 13px;">合约广告</a> <a href="/tags/%E5%9C%A8%E7%BA%BF%E5%B9%BF%E5%91%8A/" style="font-size: 13.25px;">在线广告</a> <a href="/tags/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/" style="font-size: 13px;">工程实践</a> <a href="/tags/%E5%B9%BF%E5%91%8A%E5%9F%BA%E7%A1%80/" style="font-size: 13px;">广告基础</a> <a href="/tags/%E5%B9%BF%E5%91%8A%E6%8A%95%E6%94%BE/" style="font-size: 13px;">广告投放</a> <a href="/tags/%E5%B9%BF%E5%91%8A%E7%BD%91%E7%BB%9C/" style="font-size: 13px;">广告网络</a> <a href="/tags/%E6%8E%A2%E7%B4%A2%E4%B8%8E%E5%88%A9%E7%94%A8/" style="font-size: 13px;">探索与利用</a> <a href="/tags/%E6%8E%A8%E8%8D%90%E6%A8%A1%E5%9E%8B/" style="font-size: 13px;">推荐模型</a> <a href="/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/" style="font-size: 13.75px;">推荐系统</a> <a href="/tags/%E6%90%9C%E7%B4%A2%E5%B9%BF%E5%91%8A/" style="font-size: 13px;">搜索广告</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E4%BA%A4%E6%98%93/" style="font-size: 13px;">数据交易</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%B7%A5/" style="font-size: 13px;">数据加工</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86/" style="font-size: 13px;">数据处理</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 14px;">数据库</a> <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" style="font-size: 13px;">机器学习</a> <a href="/tags/%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF/" style="font-size: 13px;">核心技术</a> <a href="/tags/%E6%A8%A1%E5%9E%8B%E8%AF%84%E4%BC%B0/" style="font-size: 13px;">模型评估</a> <a href="/tags/%E6%B5%8B%E8%AF%95%E6%A1%86%E6%9E%B6/" style="font-size: 13px;">测试框架</a> <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" style="font-size: 13.25px;">深度学习</a> <a href="/tags/%E7%82%B9%E5%87%BB%E7%8E%87%E9%A2%84%E6%B5%8B/" style="font-size: 13px;">点击率预测</a> <a href="/tags/%E7%89%B9%E5%BE%81%E5%B7%A5%E7%A8%8B/" style="font-size: 13px;">特征工程</a> <a href="/tags/%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/" style="font-size: 13px;">知识图谱</a> <a href="/tags/%E7%A8%8B%E5%BA%8F%E5%8C%96%E4%BA%A4%E6%98%93/" style="font-size: 13px;">程序化交易</a> <a href="/tags/%E7%AB%9E%E4%BB%B7%E5%B9%BF%E5%91%8A/" style="font-size: 13px;">竞价广告</a> <a href="/tags/%E7%BA%BF%E4%B8%8A%E6%9C%8D%E5%8A%A1/" style="font-size: 13px;">线上服务</a> <a href="/tags/%E8%AE%A1%E7%AE%97%E5%B9%BF%E5%91%8A/" style="font-size: 13px;">计算广告</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">推荐阅读</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled ">
+        
+          <li>
+<!--              -->
+<!--             <div class="item-thumb"> -->
+<!--               <a href="/posts/d837735f.html" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+ -->
+<!--             </div> -->
+<!--              -->
+            <div class="item-inner">
+<!--               <p class="item-category"> -->
+<!--                 <a class="category-link" href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/">人工智能</a> -->
+<!--               </p> -->
+              <p class="item-title">
+                <a href="/posts/d837735f.html" class="title">机器之心-2020年AI进展及2021年趋势关注重点笔记</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-02-26T12:22:15.000Z" itemprop="datePublished">2021-02-26</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+<!--              -->
+<!--             <div class="item-thumb"> -->
+<!--               <a href="/posts/6cc588ae.html" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+ -->
+<!--             </div> -->
+<!--              -->
+            <div class="item-inner">
+<!--               <p class="item-category"> -->
+<!--                 <a class="category-link" href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/">人工智能</a> -->
+<!--               </p> -->
+              <p class="item-title">
+                <a href="/posts/6cc588ae.html" class="title">智源研究院-2020年AI进展及2021年趋势关注重点笔记</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-02-24T13:36:22.000Z" itemprop="datePublished">2021-02-24</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+<!--              -->
+<!--             <div class="item-thumb"> -->
+<!--               <a href="/posts/a08c2ad5.html" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+ -->
+<!--             </div> -->
+<!--              -->
+            <div class="item-inner">
+<!--               <p class="item-category"> -->
+<!--                 <a class="category-link" href="/categories/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/">论文笔记</a> -->
+<!--               </p> -->
+              <p class="item-title">
+                <a href="/posts/a08c2ad5.html" class="title">GNN笔记01-基础原理与应用</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-02-04T06:30:40.000Z" itemprop="datePublished">2021-02-04</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+<!--              -->
+<!--             <div class="item-thumb"> -->
+<!--               <a href="/posts/2c4e9dc8.html" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+ -->
+<!--             </div> -->
+<!--              -->
+            <div class="item-inner">
+<!--               <p class="item-category"> -->
+<!--                 <a class="category-link" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/">深度学习推荐系统</a> -->
+<!--               </p> -->
+              <p class="item-title">
+                <a href="/posts/2c4e9dc8.html" class="title">深度学习推荐系统-笔记13：探究业界主流的推荐系统解决方案</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-01-05T15:24:40.000Z" itemprop="datePublished">2021-01-05</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+<!--              -->
+<!--             <div class="item-thumb"> -->
+<!--               <a href="/posts/9f710c67.html" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+ -->
+<!--             </div> -->
+<!--              -->
+            <div class="item-inner">
+<!--               <p class="item-category"> -->
+<!--                 <a class="category-link" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/">深度学习推荐系统</a> -->
+<!--               </p> -->
+              <p class="item-title">
+                <a href="/posts/9f710c67.html" class="title">深度学习推荐系统-笔记12：模型评估</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-01-05T14:28:20.000Z" itemprop="datePublished">2021-01-05</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">三月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">二月 2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">十月 2020</a><span class="archive-list-count">16</span></li></ul>
+    </div>
+  </div>
+
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B9%BF%E5%91%8A%E4%BD%8D%E5%90%88%E7%BA%A6"><span class="toc-number">1.</span> <span class="toc-text"> 广告位合约</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%80%E6%97%A9%E4%BA%A7%E7%94%9F%E7%9A%84%E5%9C%A8%E7%BA%BF%E5%B9%BF%E5%91%8A%E5%94%AE%E5%8D%96%E6%96%B9%E5%BC%8F"><span class="toc-number">1.1.</span> <span class="toc-text"> 最早产生的在线广告售卖方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%98%E7%82%B9%E5%93%81%E7%89%8C%E5%86%B2%E5%87%BB-%E6%A9%B1%E7%AA%97%E6%95%88%E5%BA%94-%E5%8F%AF%E6%8F%90%E4%BE%9B%E9%99%84%E5%8A%A0%E6%9C%8D%E5%8A%A1%E7%AB%9E%E5%93%81%E6%8E%92%E4%BB%96"><span class="toc-number">1.2.</span> <span class="toc-text"> 优点：品牌冲击、橱窗效应、可提供附加服务(竞品排他)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%BA%E7%82%B9%E5%8F%97%E4%BC%97%E5%AE%9A%E5%90%91%E4%B9%8B%E5%89%8D%E6%97%A0%E6%B3%95%E5%81%9A%E5%88%B0%E6%8C%89%E7%85%A7%E5%8F%97%E4%BC%97%E6%8A%95%E6%94%BE%E9%9A%BE%E4%BB%A5%E6%B7%B1%E5%85%A5%E4%BC%98%E5%8C%96%E6%95%88%E6%9E%9C"><span class="toc-number">1.3.</span> <span class="toc-text"> 缺点：受众定向之前，无法做到按照受众投放，难以深入优化效果</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%91%E5%B1%95%E9%9A%8F%E7%9D%80%E5%8F%97%E4%BC%97%E5%AE%9A%E5%90%91%E6%8A%80%E6%9C%AF%E5%8F%91%E5%B1%95%E5%B9%BF%E5%91%8A%E4%BD%8D%E5%90%88%E7%BA%A6%E4%B9%9F%E5%8F%AF%E4%BB%A5%E6%A0%B9%E6%8D%AE%E5%8F%97%E4%BC%97%E4%B8%8D%E5%90%8C%E6%8A%95%E9%80%81%E5%88%9B%E6%84%8F"><span class="toc-number">1.4.</span> <span class="toc-text"> 发展：随着受众定向技术发展，广告位合约也可以根据受众不同投送创意</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%98%E7%A7%8D%E8%BD%AE%E6%92%AD%E5%94%AE%E5%8D%96"><span class="toc-number">1.5.</span> <span class="toc-text"> 变种：轮播售卖</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%97%E4%BC%97%E5%AE%9A%E5%90%91"><span class="toc-number">2.</span> <span class="toc-text"> 受众定向</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E8%AF%84%E4%BB%B7"><span class="toc-number">2.1.</span> <span class="toc-text"> 方法评价</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E6%A6%82%E8%A7%88"><span class="toc-number">2.2.</span> <span class="toc-text"> 方法概览</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%87%E7%AD%BE%E4%BD%93%E7%B3%BB"><span class="toc-number">2.3.</span> <span class="toc-text"> 标签体系</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B1%95%E7%A4%BA%E9%87%8F%E5%90%88%E7%BA%A6gd"><span class="toc-number">3.</span> <span class="toc-text"> 展示量合约(GD)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A6%82%E5%BF%B5%E4%BB%8B%E7%BB%8D"><span class="toc-number">3.1.</span> <span class="toc-text"> 概念介绍</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B5%81%E9%87%8F%E9%A2%84%E6%B5%8B"><span class="toc-number">3.2.</span> <span class="toc-text"> 流量预测</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B5%81%E9%87%8F%E5%A1%91%E5%BD%A2"><span class="toc-number">3.3.</span> <span class="toc-text"> 流量塑形</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%A8%E7%BA%BF%E5%88%86%E9%85%8D"><span class="toc-number">3.4.</span> <span class="toc-text"> 在线分配</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B8%E5%9E%8B%E4%BA%A7%E5%93%81%E5%9C%BA%E6%99%AF"><span class="toc-number">3.5.</span> <span class="toc-text"> 典型产品场景</span></a></li></ol></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-AdComputation/04.合约广告" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      计算广告-笔记04：合约广告
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/posts/a973a56.html" class="article-date">
+	  <time datetime="2020-10-01T04:00:10.000Z" itemprop="datePublished">2020-10-01</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/%E8%AE%A1%E7%AE%97%E5%B9%BF%E5%91%8A/">计算广告</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/%E5%90%88%E7%BA%A6%E5%B9%BF%E5%91%8A/" rel="tag">合约广告</a>
+  </span>
+
+
+        
+	<span class="article-read hidden-xs">
+	    <i class="icon icon-eye-fill" aria-hidden="true"></i>
+	    <span id="busuanzi_container_page_pv">
+			<span id="busuanzi_value_page_pv">0</span>
+		</span>
+	</span>
+
+
+<!--         <span class="post-comment"><i class="icon icon-comment"></i> <a href="/posts/a973a56.html#comments" class="article-comment-link">评论</a></span> -->
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数: 1.3k(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">预计: 4(分)</span>
+	
+
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h2 id="广告位合约"><a class="markdownIt-Anchor" href="#广告位合约"></a> 广告位合约</h2>
+<h3 id="最早产生的在线广告售卖方式"><a class="markdownIt-Anchor" href="#最早产生的在线广告售卖方式"></a> 最早产生的在线广告售卖方式</h3>
+<ul>
+<li>
+<p>形式：指媒体和广告主约定在某一时间段内在某些广告位上固定投送广告主的广告</p>
+</li>
+<li>
+<p>结算方式：CPT</p>
+</li>
+<li>
+<p>广告排期系统</p>
+<ul>
+<li>DFP(DoubleClick)</li>
+<li>好耶Allyes</li>
+<li>百度广告管家</li>
+</ul>
+</li>
+</ul>
+<h3 id="优点品牌冲击-橱窗效应-可提供附加服务竞品排他"><a class="markdownIt-Anchor" href="#优点品牌冲击-橱窗效应-可提供附加服务竞品排他"></a> 优点：品牌冲击、橱窗效应、可提供附加服务(竞品排他)</h3>
+<h3 id="缺点受众定向之前无法做到按照受众投放难以深入优化效果"><a class="markdownIt-Anchor" href="#缺点受众定向之前无法做到按照受众投放难以深入优化效果"></a> 缺点：受众定向之前，无法做到按照受众投放，难以深入优化效果</h3>
+<h3 id="发展随着受众定向技术发展广告位合约也可以根据受众不同投送创意"><a class="markdownIt-Anchor" href="#发展随着受众定向技术发展广告位合约也可以根据受众不同投送创意"></a> 发展：随着受众定向技术发展，广告位合约也可以根据受众不同投送创意</h3>
+<h3 id="变种轮播售卖"><a class="markdownIt-Anchor" href="#变种轮播售卖"></a> 变种：轮播售卖</h3>
+<h2 id="受众定向"><a class="markdownIt-Anchor" href="#受众定向"></a> 受众定向</h2>
+<h3 id="方法评价"><a class="markdownIt-Anchor" href="#方法评价"></a> 方法评价</h3>
+<ul>
+<li>效果：符合该定向方式的流量高出平均效果的水平</li>
+<li>规模：流量占整体广告库存流量的比例</li>
+</ul>
+<h3 id="方法概览"><a class="markdownIt-Anchor" href="#方法概览"></a> 方法概览</h3>
+<ul>
+<li>
+<p>地域定向</p>
+<ul>
+<li>很直觉也很早广泛使用的方法</li>
+<li>也可以认为是一种上下文定向</li>
+</ul>
+</li>
+<li>
+<p>人口属性定向</p>
+<ul>
+<li>
+<p>标签包括:年龄、性别、受教育程度、收入水平等</p>
+</li>
+<li>
+<p>效果未必突出，但是在传统广告种大量使用</p>
+</li>
+<li>
+<p>准确进行人口属性定向不容易</p>
+<ul>
+<li>专门的数据来源：实名制的SNS注册信息等</li>
+<li>根据已知人口属性数据构造分类器对未知数据自动标注</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>上下文定向</p>
+<ul>
+<li>概念：根据网页或应用的具体内容定向</li>
+<li>粒度：关键词、主题、广告主需求确定的分类</li>
+<li>优点：覆盖率高，往往可以根据当前浏览的页面推测用户的即时兴趣</li>
+<li>应用：ADN中首选的定向方法之一</li>
+</ul>
+</li>
+<li>
+<p>行为定向</p>
+<ul>
+<li>概念：基于用户的历史访问行为挖掘用户兴趣</li>
+<li>形式：可以认为是一系列上下文定向的融合结果</li>
+<li>行为定向的框架、算法和评价指标奠定了在线广告数据驱动的本质特征，催生了数据加工和交易的衍生业务</li>
+</ul>
+</li>
+<li>
+<p>精确位置定向</p>
+<ul>
+<li>要素：移动蜂窝、WiFi、GPS、蓝牙</li>
+<li>应用：大量区域性非常强的小广告主有机会投放精准广告，与地域定向有质的区别</li>
+</ul>
+</li>
+<li>
+<p>重定向</p>
+<ul>
+<li>概念：对广告主过去一段时间内的访客再次投放广告以提升效果</li>
+<li>效果：公认的精准程度高、效果最突出，但是人群覆盖量较小</li>
+</ul>
+</li>
+<li>
+<p>新客推荐定向</p>
+<ul>
+<li>概念：根据广告主提供的种子访客，找到行为相似的潜在客户</li>
+</ul>
+</li>
+<li>
+<p>动态定价</p>
+<ul>
+<li>非定向广告技术</li>
+<li>形式：直接显示打折或降价的促销信息</li>
+<li>团购也是一种变相的广告形式</li>
+</ul>
+</li>
+<li>
+<p>场景定向</p>
+<ul>
+<li>移动环境下的新问题，基于用户使用手机时的不同背景状态</li>
+</ul>
+</li>
+</ul>
+<h3 id="标签体系"><a class="markdownIt-Anchor" href="#标签体系"></a> 标签体系</h3>
+<ul>
+<li>
+<p>背景：一些反映用户兴趣的受众定向方法(如行为定向)，需要一个标签体系，将用户映射到其中一个或者几个标签上去</p>
+</li>
+<li>
+<p>组织形式</p>
+<ul>
+<li>结构化层次标签体系：适用于将标签座位广告投放的直接标的，既方便广告主理解，又方便其选择</li>
+<li>非结构化的标签体系：当标签仅仅是投放系统需要的中间变量，如CTR预测或其他模块的变量输入时</li>
+<li>特殊形式：关键词，直接按照搜索或者浏览内容的关键词划分人群，比较精准</li>
+</ul>
+</li>
+<li>
+<p>设计思路</p>
+<ul>
+<li>
+<p>分行业</p>
+</li>
+<li>
+<p>关键思路：深入研究该行业的用户决策过程</p>
+<ul>
+<li>汽车行业：价格&gt;车型&gt;品牌</li>
+<li>游戏行业：</li>
+<li>电商行业：不依靠分类，以单品+个性化推荐方法构建标签体系</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="展示量合约gd"><a class="markdownIt-Anchor" href="#展示量合约gd"></a> 展示量合约(GD)</h2>
+<h3 id="概念介绍"><a class="markdownIt-Anchor" href="#概念介绍"></a> 概念介绍</h3>
+<ul>
+<li>未摆脱广告位标的物：媒体从固定广告位售卖变为CPM售卖，为了在流量变现的基础上加上数据变现，面向的仍然是原来的品牌广告主</li>
+<li>无法把多个差别很大的广告位打包成同一标的物售卖，因为曝光有效性差别可能较大。</li>
+</ul>
+<h3 id="流量预测"><a class="markdownIt-Anchor" href="#流量预测"></a> 流量预测</h3>
+<ul>
+<li>展示量合约售卖的是某特定人群上的广告曝光次数，人群不同于确定的广告位，因此必须在合约中约定投放的量，继而产生了流量预测</li>
+<li>流量预测的主要用途是：售前指导、在线流量分配、出价指导</li>
+</ul>
+<h3 id="流量塑形"><a class="markdownIt-Anchor" href="#流量塑形"></a> 流量塑形</h3>
+<ul>
+<li>主动影响流量，以利于合约的达成</li>
+</ul>
+<h3 id="在线分配"><a class="markdownIt-Anchor" href="#在线分配"></a> 在线分配</h3>
+<ul>
+<li>
+<p>各个合约要求的人群可能重叠，需要设计合理的在线分配策略，使得各个合约得到满足</p>
+</li>
+<li>
+<p>简化为一个二部图匹配问题</p>
+<ul>
+<li>
+<p>二部图介绍</p>
+<ul>
+<li>一方标识广告库存的共计节点，每个节点代表人群标签对应的流量集合</li>
+<li>另外一方表示广告合约的需求节点，每个节点代表的是一个广告合约的人群标签条件</li>
+</ul>
+</li>
+<li>
+<p>常用方法：高水位方法HWM</p>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="典型产品场景"><a class="markdownIt-Anchor" href="#典型产品场景"></a> 典型产品场景</h3>
+<ul>
+<li>视频广告资源</li>
+<li>全球主要门户网站的品牌性广告位</li>
+</ul>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="https://www.notlate.net/posts/a973a56.html" title="计算广告-笔记04：合约广告" target="_blank" rel="external">https://www.notlate.net/posts/a973a56.html</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<!-- <div class="panel panel-default panel-badger"> -->
+<!--   <div class="panel-body"> -->
+<!--     <figure class="media"> -->
+<!--       <div class="media-left"> -->
+<!--         <a href="" target="_blank" class="img-burn thumb-sm visible-lg"> -->
+<!--           <img src="/images/logo.png" class="img-rounded w-full" alt=""> -->
+<!--         </a> -->
+<!--       </div> -->
+<!--       <div class="media-body"> -->
+<!--         <h3 class="media-heading"><a href="" target="_blank"><span class="text-dark">ACDance</span><small class="ml-1x">一无所知，或是没被理解；&lt;br/&gt;一事无成，或是没被重视。</small></a></h3> -->
+<!--         <div></div> -->
+<!--       </div> -->
+<!--     </figure> -->
+<!--   </div> -->
+<!-- </div> -->
+
+
+    </div>
+  </article>
+  
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/posts/8a804683.html" title="计算广告-笔记05：搜索广告&amp;竞价广告"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/posts/a7fc312.html" title="计算广告-笔记03：在线广告产品概览"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+        <span>[&nbsp;</span><span>文章目录</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>赏</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>感谢您的支持，我会继续努力的!</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/alipayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开支付宝扫一扫，即可进行扫码打赏哦</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechatpayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开微信扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> 支付宝</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> 微信支付</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/NotLateYet" target="_blank" title="Github" ><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" ><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        &copy; 2021 ACDance
+        
+<!--         <div class="publishby"> -->
+<!--         	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>. -->
+<!--         </div> -->
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: true,
+    notify: false,
+    appId: 'rjHvwlAnqIFCN31UINTnwMEL-gzGzoHsz',
+    appKey: '2Q9D5J3pYGojfU6ppehPEnB3',
+    placeholder: '欢迎提出意见和建议',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: false
+  });
+  </script>
+
+     
+
+
+
+  <script src="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.3.5/dist/jquery.fancybox.min.js"></script>
+  <script>
+  //利用 FancyBox 实现点击图片放大
+  $(document).ready(function() {
+    $('article img').not('[hidden]').not('.panel-body img').each(function() {
+      var $image = $(this);
+      var imageCaption = $image.attr('alt');
+      var $imageWrapLink = $image.parent('a');
+      if ($imageWrapLink.length < 1) {
+        var src = this.getAttribute('src');
+        var idx = src.lastIndexOf('?');
+        if (idx != -1) {
+          src = src.substring(0, idx);
+        }
+        $imageWrapLink = $image.wrap('<a href="' + src + '"></a>').parent('a');
+      }
+      $imageWrapLink.attr('data-fancybox', 'images');
+      if (imageCaption) {
+        $imageWrapLink.attr('data-caption', imageCaption);
+      }
+    });
+    $().fancybox({
+      selector: '[data-fancybox="images"]',
+      hash: false,
+      loop: false,
+    });
+  });
+  </script>
+
+
+
+
+    <script defer>
+var _hmt = _hmt || [];
+(function() {
+    var hm = document.createElement("script");
+    hm.src = "//hm.baidu.com/hm.js?8efc12c51b549f06ae0c6a3c0d0f2e56";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>

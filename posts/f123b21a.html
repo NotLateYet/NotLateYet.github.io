@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  <meta name="google-site-verification" content="z98GT4PZdRgrcES2hf9DTxMShekuK_k-48TNAutBYZg" />
+  
+  
+    <meta name="msvalidate.01" content="8C31B0044947BFFD6869DD1B5E5E8268" />
+  
+  
+  <meta name="baidu-site-verification" content="code-fDSTdt2hx7" />
+  
+  
+  <title>计算广告-笔记14：点击率预测模型 | Not late</title>
+  <meta name="description" content="点击率预测模型  点击率：把点击事件h看成一个二元取值的随机变量，取值为真(h&#x3D;1)的概率就是点击率  点击事件分布：表示成以点击率μ为参数的二项分布  点击率基础模型：逻辑回归(LR)，在(a,u,c)组合与点击率μ之间建立函数关系，表示成对μ(a,u,c)&#x3D;p(h&#x3D;1|a,u,c)的概率建模问题  LR正是当目标值的分布服从伯努利分布时广义线性模型的特例，映射函数是logit(t)&#x3D;log{">
+<meta property="og:type" content="article">
+<meta property="og:title" content="计算广告-笔记14：点击率预测模型">
+<meta property="og:url" content="https://www.notlate.net/posts/f123b21a.html">
+<meta property="og:site_name" content="Not late yet">
+<meta property="og:description" content="点击率预测模型  点击率：把点击事件h看成一个二元取值的随机变量，取值为真(h&#x3D;1)的概率就是点击率  点击事件分布：表示成以点击率μ为参数的二项分布  点击率基础模型：逻辑回归(LR)，在(a,u,c)组合与点击率μ之间建立函数关系，表示成对μ(a,u,c)&#x3D;p(h&#x3D;1|a,u,c)的概率建模问题  LR正是当目标值的分布服从伯努利分布时广义线性模型的特例，映射函数是logit(t)&#x3D;log{">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-10-03T10:30:30.000Z">
+<meta property="article:modified_time" content="2021-03-18T15:04:38.462Z">
+<meta property="article:author" content="ACDance">
+<meta property="article:tag" content="点击率预测">
+<meta property="article:tag" content="探索与利用">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://www.notlate.net/posts/f123b21a.html">
+  
+    <link rel="alternate" href="/atom.xml" title="Not late yet" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+    <link href="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.3.5/dist/jquery.fancybox.min.css" rel="stylesheet">
+  
+  
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+<body class="main-center theme-blue" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="" target="_blank">
+          <img class="img-circle img-rotate" src="/images/logo.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">ACDance</h2>
+<!--         <h3 id="title" class="hidden-xs hidden-sm hidden-md">一无所知，或是没被理解；&lt;br/&gt;一事无成，或是没被重视。</h3> -->
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">
+            一无所知，或是没被理解；<br/>一事无成，或是没被重视。
+        </h3>
+<!--         <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> </small> -->
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="检索..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/NotLateYet" target="_blank" title="Github" ><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" ><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/">人工智能</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F/">分布式</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/">深度学习推荐系统</a><span class="category-list-count">13</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%A1%E7%AE%97%E5%B9%BF%E5%91%8A/">计算广告</a><span class="category-list-count">16</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/">论文笔记</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/ADX/" style="font-size: 13px;">ADX</a> <a href="/tags/DSP/" style="font-size: 13px;">DSP</a> <a href="/tags/Embedding/" style="font-size: 13px;">Embedding</a> <a href="/tags/GNN/" style="font-size: 13px;">GNN</a> <a href="/tags/MMoE/" style="font-size: 13px;">MMoE</a> <a href="/tags/SSP/" style="font-size: 13px;">SSP</a> <a href="/tags/mongodb/" style="font-size: 13.5px;">mongodb</a> <a href="/tags/redis/" style="font-size: 13.5px;">redis</a> <a href="/tags/%E4%B8%9A%E7%95%8C%E4%B8%BB%E6%B5%81/" style="font-size: 13px;">业界主流</a> <a href="/tags/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" style="font-size: 13.25px;">人工智能</a> <a href="/tags/%E4%BC%A0%E7%BB%9F%E7%AE%97%E6%B3%95/" style="font-size: 13px;">传统算法</a> <a href="/tags/%E4%BF%A1%E6%81%AF%E6%B5%81/" style="font-size: 13px;">信息流</a> <a href="/tags/%E5%8D%8F%E5%90%8C%E8%BF%87%E6%BB%A4/" style="font-size: 13px;">协同过滤</a> <a href="/tags/%E5%8E%9F%E7%94%9F%E5%B9%BF%E5%91%8A/" style="font-size: 13px;">原生广告</a> <a href="/tags/%E5%8F%91%E5%B1%95%E8%B6%8B%E5%8A%BF/" style="font-size: 13.25px;">发展趋势</a> <a href="/tags/%E5%8F%97%E4%BC%97%E5%AE%9A%E5%90%91/" style="font-size: 13px;">受众定向</a> <a href="/tags/%E5%90%88%E7%BA%A6%E5%B9%BF%E5%91%8A/" style="font-size: 13px;">合约广告</a> <a href="/tags/%E5%9C%A8%E7%BA%BF%E5%B9%BF%E5%91%8A/" style="font-size: 13.25px;">在线广告</a> <a href="/tags/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/" style="font-size: 13px;">工程实践</a> <a href="/tags/%E5%B9%BF%E5%91%8A%E5%9F%BA%E7%A1%80/" style="font-size: 13px;">广告基础</a> <a href="/tags/%E5%B9%BF%E5%91%8A%E6%8A%95%E6%94%BE/" style="font-size: 13px;">广告投放</a> <a href="/tags/%E5%B9%BF%E5%91%8A%E7%BD%91%E7%BB%9C/" style="font-size: 13px;">广告网络</a> <a href="/tags/%E6%8E%A2%E7%B4%A2%E4%B8%8E%E5%88%A9%E7%94%A8/" style="font-size: 13px;">探索与利用</a> <a href="/tags/%E6%8E%A8%E8%8D%90%E6%A8%A1%E5%9E%8B/" style="font-size: 13px;">推荐模型</a> <a href="/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/" style="font-size: 13.75px;">推荐系统</a> <a href="/tags/%E6%90%9C%E7%B4%A2%E5%B9%BF%E5%91%8A/" style="font-size: 13px;">搜索广告</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E4%BA%A4%E6%98%93/" style="font-size: 13px;">数据交易</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%8A%A0%E5%B7%A5/" style="font-size: 13px;">数据加工</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86/" style="font-size: 13px;">数据处理</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 14px;">数据库</a> <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" style="font-size: 13px;">机器学习</a> <a href="/tags/%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF/" style="font-size: 13px;">核心技术</a> <a href="/tags/%E6%A8%A1%E5%9E%8B%E8%AF%84%E4%BC%B0/" style="font-size: 13px;">模型评估</a> <a href="/tags/%E6%B5%8B%E8%AF%95%E6%A1%86%E6%9E%B6/" style="font-size: 13px;">测试框架</a> <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" style="font-size: 13.25px;">深度学习</a> <a href="/tags/%E7%82%B9%E5%87%BB%E7%8E%87%E9%A2%84%E6%B5%8B/" style="font-size: 13px;">点击率预测</a> <a href="/tags/%E7%89%B9%E5%BE%81%E5%B7%A5%E7%A8%8B/" style="font-size: 13px;">特征工程</a> <a href="/tags/%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/" style="font-size: 13px;">知识图谱</a> <a href="/tags/%E7%A8%8B%E5%BA%8F%E5%8C%96%E4%BA%A4%E6%98%93/" style="font-size: 13px;">程序化交易</a> <a href="/tags/%E7%AB%9E%E4%BB%B7%E5%B9%BF%E5%91%8A/" style="font-size: 13px;">竞价广告</a> <a href="/tags/%E7%BA%BF%E4%B8%8A%E6%9C%8D%E5%8A%A1/" style="font-size: 13px;">线上服务</a> <a href="/tags/%E8%AE%A1%E7%AE%97%E5%B9%BF%E5%91%8A/" style="font-size: 13px;">计算广告</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">推荐阅读</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled ">
+        
+          <li>
+<!--              -->
+<!--             <div class="item-thumb"> -->
+<!--               <a href="/posts/d837735f.html" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+ -->
+<!--             </div> -->
+<!--              -->
+            <div class="item-inner">
+<!--               <p class="item-category"> -->
+<!--                 <a class="category-link" href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/">人工智能</a> -->
+<!--               </p> -->
+              <p class="item-title">
+                <a href="/posts/d837735f.html" class="title">机器之心-2020年AI进展及2021年趋势关注重点笔记</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-02-26T12:22:15.000Z" itemprop="datePublished">2021-02-26</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+<!--              -->
+<!--             <div class="item-thumb"> -->
+<!--               <a href="/posts/6cc588ae.html" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+ -->
+<!--             </div> -->
+<!--              -->
+            <div class="item-inner">
+<!--               <p class="item-category"> -->
+<!--                 <a class="category-link" href="/categories/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/">人工智能</a> -->
+<!--               </p> -->
+              <p class="item-title">
+                <a href="/posts/6cc588ae.html" class="title">智源研究院-2020年AI进展及2021年趋势关注重点笔记</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-02-24T13:36:22.000Z" itemprop="datePublished">2021-02-24</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+<!--              -->
+<!--             <div class="item-thumb"> -->
+<!--               <a href="/posts/a08c2ad5.html" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+ -->
+<!--             </div> -->
+<!--              -->
+            <div class="item-inner">
+<!--               <p class="item-category"> -->
+<!--                 <a class="category-link" href="/categories/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/">论文笔记</a> -->
+<!--               </p> -->
+              <p class="item-title">
+                <a href="/posts/a08c2ad5.html" class="title">GNN笔记01-基础原理与应用</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-02-04T06:30:40.000Z" itemprop="datePublished">2021-02-04</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+<!--              -->
+<!--             <div class="item-thumb"> -->
+<!--               <a href="/posts/2c4e9dc8.html" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+ -->
+<!--             </div> -->
+<!--              -->
+            <div class="item-inner">
+<!--               <p class="item-category"> -->
+<!--                 <a class="category-link" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/">深度学习推荐系统</a> -->
+<!--               </p> -->
+              <p class="item-title">
+                <a href="/posts/2c4e9dc8.html" class="title">深度学习推荐系统-笔记13：探究业界主流的推荐系统解决方案</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-01-05T15:24:40.000Z" itemprop="datePublished">2021-01-05</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+<!--              -->
+<!--             <div class="item-thumb"> -->
+<!--               <a href="/posts/9f710c67.html" class="thumb">
+    
+    
+        <span class="thumb-image thumb-none"></span>
+    
+</a>
+ -->
+<!--             </div> -->
+<!--              -->
+            <div class="item-inner">
+<!--               <p class="item-category"> -->
+<!--                 <a class="category-link" href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/">深度学习推荐系统</a> -->
+<!--               </p> -->
+              <p class="item-title">
+                <a href="/posts/9f710c67.html" class="title">深度学习推荐系统-笔记12：模型评估</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-01-05T14:28:20.000Z" itemprop="datePublished">2021-01-05</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">三月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">二月 2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">十月 2020</a><span class="archive-list-count">16</span></li></ul>
+    </div>
+  </div>
+
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%82%B9%E5%87%BB%E7%8E%87%E9%A2%84%E6%B5%8B%E6%A8%A1%E5%9E%8B"><span class="toc-number">1.</span> <span class="toc-text"> 点击率预测模型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%82%B9%E5%87%BB%E7%8E%87%E6%8A%8A%E7%82%B9%E5%87%BB%E4%BA%8B%E4%BB%B6h%E7%9C%8B%E6%88%90%E4%B8%80%E4%B8%AA%E4%BA%8C%E5%85%83%E5%8F%96%E5%80%BC%E7%9A%84%E9%9A%8F%E6%9C%BA%E5%8F%98%E9%87%8F%E5%8F%96%E5%80%BC%E4%B8%BA%E7%9C%9Fh1%E7%9A%84%E6%A6%82%E7%8E%87%E5%B0%B1%E6%98%AF%E7%82%B9%E5%87%BB%E7%8E%87"><span class="toc-number">1.1.</span> <span class="toc-text"> 点击率：把点击事件h看成一个二元取值的随机变量，取值为真(h&#x3D;1)的概率就是点击率</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%82%B9%E5%87%BB%E4%BA%8B%E4%BB%B6%E5%88%86%E5%B8%83%E8%A1%A8%E7%A4%BA%E6%88%90%E4%BB%A5%E7%82%B9%E5%87%BB%E7%8E%87%CE%BC%E4%B8%BA%E5%8F%82%E6%95%B0%E7%9A%84%E4%BA%8C%E9%A1%B9%E5%88%86%E5%B8%83"><span class="toc-number">1.2.</span> <span class="toc-text"> 点击事件分布：表示成以点击率μ为参数的二项分布</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%82%B9%E5%87%BB%E7%8E%87%E5%9F%BA%E7%A1%80%E6%A8%A1%E5%9E%8B%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92lr%E5%9C%A8auc%E7%BB%84%E5%90%88%E4%B8%8E%E7%82%B9%E5%87%BB%E7%8E%87%CE%BC%E4%B9%8B%E9%97%B4%E5%BB%BA%E7%AB%8B%E5%87%BD%E6%95%B0%E5%85%B3%E7%B3%BB%E8%A1%A8%E7%A4%BA%E6%88%90%E5%AF%B9%CE%BCaucph1auc%E7%9A%84%E6%A6%82%E7%8E%87%E5%BB%BA%E6%A8%A1%E9%97%AE%E9%A2%98"><span class="toc-number">1.3.</span> <span class="toc-text"> 点击率基础模型：逻辑回归(LR)，在(a,u,c)组合与点击率μ之间建立函数关系，表示成对μ(a,u,c)&#x3D;p(h&#x3D;1|a,u,c)的概率建模问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#lr%E6%A8%A1%E5%9E%8B%E4%BC%98%E5%8C%96"><span class="toc-number">1.4.</span> <span class="toc-text"> LR模型优化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B7%A5%E4%B8%9A%E7%95%8C%E5%B8%B8%E7%94%A8%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E6%80%9D%E8%B7%AF"><span class="toc-number">1.5.</span> <span class="toc-text"> 工业界常用模型训练思路</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%82%B9%E5%87%BB%E7%8E%87%E6%A8%A1%E5%9E%8B%E7%9A%84%E7%9F%AB%E6%AD%A3%E6%AD%A3%E8%B4%9F%E6%A0%B7%E6%9C%AC%E4%B8%8D%E5%B9%B3%E8%A1%A1%E5%8F%AF%E8%83%BD%E5%B8%A6%E6%9D%A5%E9%A2%84%E4%BC%B0%E6%A8%A1%E5%9E%8B%E7%9A%84%E5%81%8F%E5%B7%AE%E5%8E%9F%E5%9B%A0%E5%A6%82%E4%B8%8B"><span class="toc-number">1.6.</span> <span class="toc-text"> 点击率模型的矫正：正负样本不平衡可能带来预估模型的偏差，原因如下:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B6%E4%BB%96%E7%82%B9%E5%87%BB%E7%8E%87%E9%A2%84%E4%BC%B0%E6%A8%A1%E5%9E%8B"><span class="toc-number">1.7.</span> <span class="toc-text"> 其他点击率预估模型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8E%A2%E7%B4%A2%E4%B8%8E%E5%88%A9%E7%94%A8"><span class="toc-number">1.8.</span> <span class="toc-text"> 探索与利用</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%82%B9%E5%87%BB%E7%8E%87%E6%A8%A1%E5%9E%8B%E7%89%B9%E5%BE%81"><span class="toc-number">2.</span> <span class="toc-text"> 点击率模型特征</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E7%89%B9%E5%BE%81%E5%B9%BF%E5%91%8A%E4%BE%A7%E7%89%B9%E5%BE%81-%E7%94%A8%E6%88%B7%E4%BE%A7%E7%89%B9%E5%BE%81-%E4%B8%8A%E4%B8%8B%E6%96%87%E7%89%B9%E5%BE%81"><span class="toc-number">2.1.</span> <span class="toc-text"> 基本特征：广告侧特征、用户侧特征、上下文特征</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%89%B9%E5%BE%81%E7%9A%84%E9%9D%9E%E7%BA%BF%E6%80%A7%E5%8C%96"><span class="toc-number">2.2.</span> <span class="toc-text"> 特征的非线性化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%89%B9%E5%BE%81%E7%BB%84%E5%90%88"><span class="toc-number">2.3.</span> <span class="toc-text"> 特征组合</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%81%8F%E5%B7%AE%E7%89%B9%E5%BE%81"><span class="toc-number">2.4.</span> <span class="toc-text"> 偏差特征</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%82%B9%E5%87%BB%E5%8F%8D%E9%A6%88%E7%9A%84%E5%B9%B3%E6%BB%91"><span class="toc-number">2.5.</span> <span class="toc-text"> 点击反馈的平滑</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%82%B9%E5%87%BB%E7%8E%87%E6%A8%A1%E5%9E%8B%E8%AF%84%E4%BB%B7"><span class="toc-number">3.</span> <span class="toc-text"> 点击率模型评价</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%86%E7%A1%AE%E7%8E%87precision-%E5%8F%AC%E5%9B%9E%E7%8E%87recallprpr%E6%9B%B2%E7%BA%BF%E4%B8%8B%E6%96%B9%E9%9D%A2%E7%A7%AF%E6%97%A0%E6%84%8F%E4%B9%89"><span class="toc-number">3.1.</span> <span class="toc-text"> 准确率Precision &#x2F; 召回率Recall（PR）：PR曲线下方面积无意义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#roc-auc%E6%8A%8Aroc%E6%9B%B2%E7%BA%BF%E4%B8%8B%E7%9A%84%E9%9D%A2%E7%A7%AF%E7%A7%B0%E4%B8%BA%E6%9B%B2%E7%BA%BF%E4%B8%8B%E6%96%B9%E9%9D%A2%E7%A7%AFauc%E6%9C%89%E6%98%8E%E7%A1%AE%E7%9A%84%E7%89%A9%E7%90%86%E6%84%8F%E4%B9%89%E5%9C%A8%E4%B8%80%E5%AE%9A%E7%A8%8B%E5%BA%A6%E4%B8%8A%E8%83%BD%E8%A1%A8%E5%BE%81%E4%BA%86%E5%AF%B9h0%E5%92%8Ch1%E4%BA%8B%E4%BB%B6%E4%BC%B0%E8%AE%A1%E5%80%BC%E6%8E%92%E5%BA%8F%E7%9A%84%E6%AD%A3%E7%A1%AE%E6%80%A7%E6%98%AF%E5%B8%B8%E7%94%A8%E7%9A%84%E9%87%8F%E5%8C%96%E6%8C%87%E6%A0%87"><span class="toc-number">3.2.</span> <span class="toc-text"> ROC &#x2F; AUC：把ROC曲线下的面积称为曲线下方面积(AUC)，有明确的物理意义，在一定程度上能表征了对h&#x3D;0和h&#x3D;1事件估计值排序的正确性，是常用的量化指标</span></a></li></ol></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-AdComputation/14.点击率预测模型" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      计算广告-笔记14：点击率预测模型
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/posts/f123b21a.html" class="article-date">
+	  <time datetime="2020-10-03T10:30:30.000Z" itemprop="datePublished">2020-10-03</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/%E8%AE%A1%E7%AE%97%E5%B9%BF%E5%91%8A/">计算广告</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/%E6%8E%A2%E7%B4%A2%E4%B8%8E%E5%88%A9%E7%94%A8/" rel="tag">探索与利用</a>, <a class="article-tag-link-link" href="/tags/%E7%82%B9%E5%87%BB%E7%8E%87%E9%A2%84%E6%B5%8B/" rel="tag">点击率预测</a>
+  </span>
+
+
+        
+	<span class="article-read hidden-xs">
+	    <i class="icon icon-eye-fill" aria-hidden="true"></i>
+	    <span id="busuanzi_container_page_pv">
+			<span id="busuanzi_value_page_pv">0</span>
+		</span>
+	</span>
+
+
+<!--         <span class="post-comment"><i class="icon icon-comment"></i> <a href="/posts/f123b21a.html#comments" class="article-comment-link">评论</a></span> -->
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数: 1.1k(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">预计: 3(分)</span>
+	
+
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h2 id="点击率预测模型"><a class="markdownIt-Anchor" href="#点击率预测模型"></a> 点击率预测模型</h2>
+<h3 id="点击率把点击事件h看成一个二元取值的随机变量取值为真h1的概率就是点击率"><a class="markdownIt-Anchor" href="#点击率把点击事件h看成一个二元取值的随机变量取值为真h1的概率就是点击率"></a> 点击率：把点击事件h看成一个二元取值的随机变量，取值为真(h=1)的概率就是点击率</h3>
+<h3 id="点击事件分布表示成以点击率μ为参数的二项分布"><a class="markdownIt-Anchor" href="#点击事件分布表示成以点击率μ为参数的二项分布"></a> 点击事件分布：表示成以点击率μ为参数的二项分布</h3>
+<h3 id="点击率基础模型逻辑回归lr在auc组合与点击率μ之间建立函数关系表示成对μaucph1auc的概率建模问题"><a class="markdownIt-Anchor" href="#点击率基础模型逻辑回归lr在auc组合与点击率μ之间建立函数关系表示成对μaucph1auc的概率建模问题"></a> 点击率基础模型：逻辑回归(LR)，在(a,u,c)组合与点击率μ之间建立函数关系，表示成对μ(a,u,c)=p(h=1|a,u,c)的概率建模问题</h3>
+<ul>
+<li>LR正是当目标值的分布服从伯努利分布时广义线性模型的特例，映射函数是logit(t)=log{p/(1-p)}</li>
+<li>L2-norm避免过拟合</li>
+</ul>
+<h3 id="lr模型优化"><a class="markdownIt-Anchor" href="#lr模型优化"></a> LR模型优化</h3>
+<ul>
+<li>梯度下降法</li>
+<li>L-BFGS</li>
+<li>置信域法</li>
+</ul>
+<h3 id="工业界常用模型训练思路"><a class="markdownIt-Anchor" href="#工业界常用模型训练思路"></a> 工业界常用模型训练思路</h3>
+<ul>
+<li>1.降低模型训练次数，通过特征侧的方法捕捉信号的快速变化</li>
+<li>2.增量求解，降低模型收敛所需的迭代次数</li>
+<li>3.精心设计最优化算法如ADMM，降低模型收敛所需的迭代次数</li>
+</ul>
+<h3 id="点击率模型的矫正正负样本不平衡可能带来预估模型的偏差原因如下"><a class="markdownIt-Anchor" href="#点击率模型的矫正正负样本不平衡可能带来预估模型的偏差原因如下"></a> 点击率模型的矫正：正负样本不平衡可能带来预估模型的偏差，原因如下:</h3>
+<ul>
+<li>高斯分布方差的最大似然估计是有偏的（为了得到方差的无偏估计，需要将样本数目-1来计算方差）</li>
+<li>偏差的方向是对方差有所低估，且样本数目越少，低估越严重。</li>
+<li>由于正样本(h=1)远远小于负样本(h=0)的数据量，对前者的低估更严重。</li>
+</ul>
+<h3 id="其他点击率预估模型"><a class="markdownIt-Anchor" href="#其他点击率预估模型"></a> 其他点击率预估模型</h3>
+<ul>
+<li>因子分解机FM</li>
+<li>GBDT</li>
+<li>深度学习点击率预估模型</li>
+</ul>
+<h3 id="探索与利用"><a class="markdownIt-Anchor" href="#探索与利用"></a> 探索与利用</h3>
+<ul>
+<li>
+<p>α贪婪法</p>
+<ul>
+<li>
+<p>决策过程</p>
+<ul>
+<li>总是用比例为α的小部分流量做探索，在探索流量上随机选择A个广告中的1个；</li>
+<li>在剩余1-α比例的流量上，总是选择经验收益最高的那个。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>置信上界(UCB)方法</p>
+<ul>
+<li>
+<p>概念：每次投放时，不但简单的选择经验最优广告，而且考虑到经验估计的不确定性，进而选择估计值有可能达到的上界最大的那个广告</p>
+</li>
+<li>
+<p>UCB决策过程</p>
+<ul>
+<li>1.根据过去的观测值，利用某概率模型计算出每个a的期望回报的UCB</li>
+<li>2.选择UCB最大的a</li>
+</ul>
+</li>
+<li>
+<p>UCB计算方法</p>
+</li>
+</ul>
+</li>
+<li>
+<p>考虑上下文的bandit</p>
+<ul>
+<li>LinUCB方法</li>
+</ul>
+</li>
+</ul>
+<h2 id="点击率模型特征"><a class="markdownIt-Anchor" href="#点击率模型特征"></a> 点击率模型特征</h2>
+<h3 id="基本特征广告侧特征-用户侧特征-上下文特征"><a class="markdownIt-Anchor" href="#基本特征广告侧特征-用户侧特征-上下文特征"></a> 基本特征：广告侧特征、用户侧特征、上下文特征</h3>
+<h3 id="特征的非线性化"><a class="markdownIt-Anchor" href="#特征的非线性化"></a> 特征的非线性化</h3>
+<ul>
+<li>特征离散化：将连续特征切成一组分区，当特征值落在某个区间时，对应区间离散特征值标1，否则标0</li>
+<li>引入特征的非线性变化，如平方、平方根、log等</li>
+</ul>
+<h3 id="特征组合"><a class="markdownIt-Anchor" href="#特征组合"></a> 特征组合</h3>
+<ul>
+<li>静态特征组合：用户侧、广告侧、上下文侧的标签组合，如性别和地点、广告主题和性别等</li>
+<li>动态特征组合：如用户对某个广告的历史点击率，即当某个组合特征被触发时，不再标为1，而是使用历史点击率作为特征值</li>
+</ul>
+<h3 id="偏差特征"><a class="markdownIt-Anchor" href="#偏差特征"></a> 偏差特征</h3>
+<ul>
+<li>
+<p>常见的偏差特征包括广告位位置、广告位尺寸、广告投放延迟、日期和时间、浏览器</p>
+</li>
+<li>
+<p>如何消除？CoEC</p>
+<ul>
+<li>
+<p>期望点击</p>
+<ul>
+<li>概念：将某广告位相当长一段时间内的平均点击数作为其关注程度的近似估计</li>
+<li>评估对象：在广告质量完全随机的情况下，广告位或其他属性对应的平均点击率</li>
+</ul>
+</li>
+<li>
+<p>偏差模型：从数据中近似学习除期望点击的方法是只用那些偏差因素作为特征，训练一个点击率模型，称为偏差模型</p>
+</li>
+<li>
+<p>CoEC：归一化点击率指标，即点击与期望点击的比值</p>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="点击反馈的平滑"><a class="markdownIt-Anchor" href="#点击反馈的平滑"></a> 点击反馈的平滑</h3>
+<ul>
+<li>当使用点击率或CoEC特征时，若展示数较小，可在分子和分母上各加上一个常数进行平滑</li>
+</ul>
+<h2 id="点击率模型评价"><a class="markdownIt-Anchor" href="#点击率模型评价"></a> 点击率模型评价</h2>
+<h3 id="准确率precision-召回率recallprpr曲线下方面积无意义"><a class="markdownIt-Anchor" href="#准确率precision-召回率recallprpr曲线下方面积无意义"></a> 准确率Precision / 召回率Recall（PR）：PR曲线下方面积无意义</h3>
+<h3 id="roc-auc把roc曲线下的面积称为曲线下方面积auc有明确的物理意义在一定程度上能表征了对h0和h1事件估计值排序的正确性是常用的量化指标"><a class="markdownIt-Anchor" href="#roc-auc把roc曲线下的面积称为曲线下方面积auc有明确的物理意义在一定程度上能表征了对h0和h1事件估计值排序的正确性是常用的量化指标"></a> ROC / AUC：把ROC曲线下的面积称为曲线下方面积(AUC)，有明确的物理意义，在一定程度上能表征了对h=0和h=1事件估计值排序的正确性，是常用的量化指标</h3>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="https://www.notlate.net/posts/f123b21a.html" title="计算广告-笔记14：点击率预测模型" target="_blank" rel="external">https://www.notlate.net/posts/f123b21a.html</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<!-- <div class="panel panel-default panel-badger"> -->
+<!--   <div class="panel-body"> -->
+<!--     <figure class="media"> -->
+<!--       <div class="media-left"> -->
+<!--         <a href="" target="_blank" class="img-burn thumb-sm visible-lg"> -->
+<!--           <img src="/images/logo.png" class="img-rounded w-full" alt=""> -->
+<!--         </a> -->
+<!--       </div> -->
+<!--       <div class="media-body"> -->
+<!--         <h3 class="media-heading"><a href="" target="_blank"><span class="text-dark">ACDance</span><small class="ml-1x">一无所知，或是没被理解；&lt;br/&gt;一事无成，或是没被重视。</small></a></h3> -->
+<!--         <div></div> -->
+<!--       </div> -->
+<!--     </figure> -->
+<!--   </div> -->
+<!-- </div> -->
+
+
+    </div>
+  </article>
+  
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/posts/cf81ffb6.html" title="计算广告-笔记15：程序化交易核心技术"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/posts/f3b32133.html" title="计算广告-笔记13：竞价广告核心技术"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+        <span>[&nbsp;</span><span>文章目录</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>赏</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>感谢您的支持，我会继续努力的!</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/alipayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开支付宝扫一扫，即可进行扫码打赏哦</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechatpayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开微信扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> 支付宝</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> 微信支付</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/NotLateYet" target="_blank" title="Github" ><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" ><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        &copy; 2021 ACDance
+        
+<!--         <div class="publishby"> -->
+<!--         	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>. -->
+<!--         </div> -->
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: true,
+    notify: false,
+    appId: 'rjHvwlAnqIFCN31UINTnwMEL-gzGzoHsz',
+    appKey: '2Q9D5J3pYGojfU6ppehPEnB3',
+    placeholder: '欢迎提出意见和建议',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: false
+  });
+  </script>
+
+     
+
+
+
+  <script src="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.3.5/dist/jquery.fancybox.min.js"></script>
+  <script>
+  //利用 FancyBox 实现点击图片放大
+  $(document).ready(function() {
+    $('article img').not('[hidden]').not('.panel-body img').each(function() {
+      var $image = $(this);
+      var imageCaption = $image.attr('alt');
+      var $imageWrapLink = $image.parent('a');
+      if ($imageWrapLink.length < 1) {
+        var src = this.getAttribute('src');
+        var idx = src.lastIndexOf('?');
+        if (idx != -1) {
+          src = src.substring(0, idx);
+        }
+        $imageWrapLink = $image.wrap('<a href="' + src + '"></a>').parent('a');
+      }
+      $imageWrapLink.attr('data-fancybox', 'images');
+      if (imageCaption) {
+        $imageWrapLink.attr('data-caption', imageCaption);
+      }
+    });
+    $().fancybox({
+      selector: '[data-fancybox="images"]',
+      hash: false,
+      loop: false,
+    });
+  });
+  </script>
+
+
+
+
+    <script defer>
+var _hmt = _hmt || [];
+(function() {
+    var hm = document.createElement("script");
+    hm.src = "//hm.baidu.com/hm.js?8efc12c51b549f06ae0c6a3c0d0f2e56";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>
